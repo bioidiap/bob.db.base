@@ -1,0 +1,4 @@
+include LICENSE README.rst bootstrap.py buildout.cfg
+recursive-include doc conf.py *.rst
+recursive-include xbob/db/test/data *.lst
+include xbob/db/iris/iris.data xbob/db/iris/iris.names
