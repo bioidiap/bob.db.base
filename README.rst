@@ -2,9 +2,9 @@
 .. Andre Anjos <andre.anjos@idiap.ch>
 .. Thu 29 Aug 2013 16:07:57 CEST
 
-============================
- Python bindings for bob.db
-============================
+==================================
+ Python bindings for xbob.db.base
+==================================
 
 This package contains a set of Pythonic bindings for Bob's database packages
 and functionality.
@@ -31,7 +31,7 @@ Testing
 
 You can run a set of tests using the nose test runner::
 
-  $ nosetests -sv xbob.db
+  $ nosetests -sv xbob.db.base
 
 .. warning::
 
@@ -48,7 +48,7 @@ You can run our documentation tests using sphinx itself::
 
 You can test overall test coverage with::
 
-  $ nosetests --with-coverage --cover-package=xbob.db
+  $ nosetests --with-coverage --cover-package=xbob.db.base
 
 The ``coverage`` egg must be installed for this to work properly.
 
