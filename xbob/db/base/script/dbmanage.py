@@ -27,7 +27,7 @@ epilog = """  For a list of available databases:
   >>> %(prog)s <database-name> --help
 """
 
-from xbob.db.manage import *
+from ..manage import *
 
 def main(user_input=None):
 
