@@ -9,10 +9,10 @@ version = '2.0.0a0'
 
 setup(
 
-    name='xbob.db',
+    name='xbob.db.base',
     version=version,
-    description='Bindings for bob.db',
-    url='http://github.com/anjos/xbob.db',
+    description='Database Bindings API',
+    url='http://github.com/anjos/xbob.db.base',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
@@ -24,23 +24,16 @@ setup(
 
     install_requires=[
       'setuptools',
-      'xbob.io',
-      'xbob.measure',
-      'xbob.machine',
-      'xbob.trainer',
     ],
 
     namespace_packages=[
       "xbob",
+      "xbob.db",
       ],
 
     entry_points={
       'console_scripts': [
-        'xbob_dbmanage.py = xbob.db.script.dbmanage:main',
-        ],
-
-      'xbob.db': [
-        'iris = xbob.db.iris.driver:Interface',
+        'xbob_dbmanage.py = xbob.db.base.script.dbmanage:main',
         ],
 
       },

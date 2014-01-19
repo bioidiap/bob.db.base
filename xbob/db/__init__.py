@@ -1,12 +1,2 @@
-#!/usr/bin/env python
-# Andre Anjos <andre.anjos@idiap.ch>
-# Thu 23 Jun 20:22:28 2011 CEST
-# vim: set fileencoding=utf-8 :
-
-"""The db package contains simplified APIs to access data for various databases
-that can be used in Biometry, Machine Learning or Pattern Classification."""
-
-from . import utils, driver, iris
-
-__all__ = [k for k in dir() if not k.startswith('_')]
-if 'k' in locals(): del k
+#see http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
+__import__('pkg_resources').declare_namespace(__name__)
