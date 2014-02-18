@@ -1,6 +1,6 @@
 .. vim: set fileencoding=utf-8 :
 .. Andre Anjos <andre.anjos@idiap.ch>
-.. Tue 20 Mar 2012 08:57:32 CET 
+.. Tue 20 Mar 2012 08:57:32 CET
 
 .. Place here references to all citations in lower case
 
@@ -13,6 +13,7 @@
 .. _scipy: http://www.scipy.org
 .. _setuptools: http://trac.edgewall.org/wiki/setuptools
 .. _sphinx: http://sphinx.pocoo.org
+.. _sqlite: http://www.sqlite.org/
 
 .. Place here references to licenses
 

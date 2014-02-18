@@ -7,17 +7,17 @@
 ============================
 
 |project| provides an API to easily query and interface with well known
-databases. A |project| database contains information about the organization
-of the files, functions to query information such as the data which might be
-used for training a model, but it usually does **not** contain the data itself
-(except for some toy examples). Most of the databases are stored in a sqlite_
-file, whereas the smallest ones can be stored as filelists.
+database protocols. A |project| database contains information about the
+organization of the files, functions to query information such as the data
+which might be used for training a model, but it usually does **not** contain
+the data itself (except for some toy examples). Many of the database packages
+provide functionality through data stored in sqlite_ files, whereas the
+smallest ones can be stored as filelists.
 
 As databases usually contain thousands of files, and as verification protocols
 often require to store information about pairs of files, the size of such
 databases can become very large. For this reason, we have decided to
-externalize many of them in `Satellite Packages`_.
-
+externalize many of them in Satellite Packages.
 
 .. testsetup:: *
 
