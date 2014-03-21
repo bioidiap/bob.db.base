@@ -19,6 +19,12 @@ often require to store information about pairs of files, the size of such
 databases can become very large. For this reason, we have decided to
 externalize many of them in Satellite Packages.
 
+Reference
+---------
+
+.. automodule:: xbob.db.base
+
+
 Indices and tables
 ------------------
 
@@ -27,6 +33,3 @@ Indices and tables
 * :ref:`search`
 
 .. include:: links.rst
-
-.. Place here your external references
-
