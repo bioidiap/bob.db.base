@@ -8,7 +8,7 @@ that can be used in Biometry, Machine Learning or Pattern Classification."""
 
 import pkg_resources
 
-__version__ = __import__('pkg_resources').require(__name__)[0].version
+__version__ = pkg_resources.require(__name__)[0].version
 
 def get_config():
   """Returns a string containing the configuration information.
