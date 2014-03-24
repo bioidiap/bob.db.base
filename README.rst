@@ -4,6 +4,14 @@
 
 .. image:: https://travis-ci.org/bioidiap/xbob.db.base.svg?branch=master
    :target: https://travis-ci.org/bioidiap/xbob.db.base
+.. image:: https://coveralls.io/repos/bioidiap/xbob.db.base/badge.png
+   :target: https://coveralls.io/r/bioidiap/xbob.db.base
+.. image:: http://img.shields.io/github/tag/bioidiap/xbob.db.base.png
+   :target: https://github.com/bioidiap/xbob.db.base
+.. image:: http://img.shields.io/pypi/v/xbob.db.base.png
+   :target: https://pypi.python.org/pypi/xbob.db.base
+.. image:: http://img.shields.io/pypi/dm/xbob.db.base.png
+   :target: https://pypi.python.org/pypi/xbob.db.base
 
 ==================================
  Python bindings for xbob.db.base
