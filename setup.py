@@ -12,7 +12,7 @@ setup(
     name='xbob.db.base',
     version=version,
     description='Database Bindings API',
-    url='http://github.com/anjos/xbob.db.base',
+    url='http://github.com/bioidiap/xbob.db.base',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
