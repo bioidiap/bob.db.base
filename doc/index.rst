@@ -29,12 +29,12 @@ This section contains the reference guide for ``xbob.db.base``.
 Database Handling Utilities
 ===========================
 
-.. automodule:: xbob.db.utils
+.. automodule:: xbob.db.base.utils
 
 Driver API
 ==========
 
-.. automodule:: xbob.db.driver
+.. automodule:: xbob.db.base.driver
 
 Indices and tables
 ------------------
