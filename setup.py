@@ -24,7 +24,7 @@ setup(
 
     install_requires=[
       'setuptools',
-      'xbob.io',
+      'xbob.io.base',
     ],
 
     namespace_packages=[
