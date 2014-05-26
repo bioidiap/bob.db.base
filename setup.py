@@ -9,10 +9,10 @@ version = '2.0.0a0'
 
 setup(
 
-    name='xbob.db.base',
+    name='bob.db.base',
     version=version,
     description='Database Bindings API',
-    url='http://github.com/bioidiap/xbob.db.base',
+    url='http://github.com/bioidiap/bob.db.base',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
@@ -24,17 +24,17 @@ setup(
 
     install_requires=[
       'setuptools',
-      'xbob.io.base',
+      'bob.io.base',
     ],
 
     namespace_packages=[
-      "xbob",
-      "xbob.db",
+      "bob",
+      "bob.db",
       ],
 
     entry_points={
       'console_scripts': [
-        'xbob_dbmanage.py = xbob.db.base.script.dbmanage:main',
+        'bob_dbmanage.py = bob.db.base.script.dbmanage:main',
         ],
 
       },

@@ -2,19 +2,19 @@
 .. Andre Anjos <andre.anjos@idiap.ch>
 .. Thu 29 Aug 2013 16:07:57 CEST
 
-.. image:: https://travis-ci.org/bioidiap/xbob.db.base.svg?branch=master
-   :target: https://travis-ci.org/bioidiap/xbob.db.base
-.. image:: https://coveralls.io/repos/bioidiap/xbob.db.base/badge.png
-   :target: https://coveralls.io/r/bioidiap/xbob.db.base
-.. image:: http://img.shields.io/github/tag/bioidiap/xbob.db.base.png
-   :target: https://github.com/bioidiap/xbob.db.base
-.. image:: http://img.shields.io/pypi/v/xbob.db.base.png
-   :target: https://pypi.python.org/pypi/xbob.db.base
-.. image:: http://img.shields.io/pypi/dm/xbob.db.base.png
-   :target: https://pypi.python.org/pypi/xbob.db.base
+.. image:: https://travis-ci.org/bioidiap/bob.db.base.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/bob.db.base
+.. image:: https://coveralls.io/repos/bioidiap/bob.db.base/badge.png
+   :target: https://coveralls.io/r/bioidiap/bob.db.base
+.. image:: http://img.shields.io/github/tag/bioidiap/bob.db.base.png
+   :target: https://github.com/bioidiap/bob.db.base
+.. image:: http://img.shields.io/pypi/v/bob.db.base.png
+   :target: https://pypi.python.org/pypi/bob.db.base
+.. image:: http://img.shields.io/pypi/dm/bob.db.base.png
+   :target: https://pypi.python.org/pypi/bob.db.base
 
 ==================================
- Python bindings for xbob.db.base
+ Python bindings for bob.db.base
 ==================================
 
 This package contains a set of Pythonic bindings for Bob's database packages
@@ -42,7 +42,7 @@ Testing
 
 You can run a set of tests using the nose test runner::
 
-  $ nosetests -sv xbob.db.base
+  $ nosetests -sv bob.db.base
 
 .. warning::
 
@@ -59,7 +59,7 @@ You can run our documentation tests using sphinx itself::
 
 You can test overall test coverage with::
 
-  $ nosetests --with-coverage --cover-package=xbob.db.base
+  $ nosetests --with-coverage --cover-package=bob.db.base
 
 The ``coverage`` egg must be installed for this to work properly.
 

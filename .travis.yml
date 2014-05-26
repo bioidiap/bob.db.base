@@ -25,8 +25,8 @@ install:
   - "python bootstrap.py"
   - "./bin/buildout"
 script:
-  - "./bin/python -c 'from xbob.db.base import get_config; print(get_config())'"
-  - "./bin/coverage run --source=xbob.db.base ./bin/nosetests -sv"
+  - "./bin/python -c 'from bob.db.base import get_config; print(get_config())'"
+  - "./bin/coverage run --source=bob.db.base ./bin/nosetests -sv"
   - "./bin/sphinx-build -b doctest doc sphinx"
   - "./bin/sphinx-build -b html doc sphinx"
 after_success:

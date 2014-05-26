@@ -134,7 +134,7 @@ def create_parser(**kwargs):
   subparsers = parser.add_subparsers(title='databases')
 
   # for external entries
-  for entrypoint in pkg_resources.iter_entry_points('xbob.db'):
+  for entrypoint in pkg_resources.iter_entry_points('bob.db'):
     plugin = entrypoint.load()
 
   # at this point we should have loaded all databases

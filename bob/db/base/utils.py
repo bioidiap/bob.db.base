@@ -187,4 +187,4 @@ def connection_string(dbtype, dbfile, opts={}):
 
 # import the create_directories_save function from bob.io
 # (it was moved there and renamed)
-from xbob.io.base import create_directories_save as makedirs_safe
+from bob.io.base import create_directories_save as makedirs_safe

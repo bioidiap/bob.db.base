@@ -119,7 +119,7 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
     '''Returns the type of auxiliary files you have for this database
 
     If you return 'sqlite', then we append special actions such as 'dbshell'
-    on 'xbob_dbmanage.py' automatically for you. Otherwise, we don't.
+    on 'bob_dbmanage.py' automatically for you. Otherwise, we don't.
 
     If you use auxiliary text files, just return 'text'. We may provide
     special services for those types in the future.

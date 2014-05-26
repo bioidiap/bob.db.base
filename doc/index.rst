@@ -24,19 +24,19 @@ externalize many of them in Satellite Packages.
 Reference
 ---------
 
-This section contains the reference guide for ``xbob.db.base``.
+This section contains the reference guide for ``bob.db.base``.
 
-.. automodule:: xbob.db.base
+.. automodule:: bob.db.base
 
 Database Handling Utilities
 ===========================
 
-.. automodule:: xbob.db.base.utils
+.. automodule:: bob.db.base.utils
 
 Driver API
 ==========
 
-.. automodule:: xbob.db.base.driver
+.. automodule:: bob.db.base.driver
 
 Indices and tables
 ------------------
