@@ -185,6 +185,3 @@ def connection_string(dbtype, dbfile, opts={}):
   from sqlalchemy.engine.url import URL
   return URL(dbtype, database=dbfile)
 
-# import the create_directories_save function from bob.io
-# (it was moved there and renamed)
-from bob.io.base import create_directories_save as makedirs_safe

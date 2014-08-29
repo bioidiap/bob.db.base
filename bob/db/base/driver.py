@@ -10,7 +10,6 @@ manage installed files.
 
 import os
 import abc
-from .utils import makedirs_safe
 
 def dbshell(arguments):
   """Drops you into a database shell"""
