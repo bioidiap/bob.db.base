@@ -24,6 +24,7 @@ setup(
 
     install_requires=[
       'setuptools',
+      'sqlalchemy',
       'bob.io.base',
     ],
 
