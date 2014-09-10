@@ -57,6 +57,76 @@ def dbshell_command(subparsers):
       help="does not actually run, just prints what would do instead")
   parser.set_defaults(func=dbshell)
 
+
+def upload(arguments):
+  """For SQLite databases: uploads the db.sql3 database file to a server."""
+  # get the file name of the target db
+  assert len(arguments.files) == 1
+  assert os.path.basename(arguments.files[0]) == 'db.sql3'
+  source_file = arguments.files[0]
+  target_file = os.path.join(arguments.destination, arguments.name + ".tar.bz2")
+
+  if os.path.exists(source_file):
+    print ("Compressing file '%s' to '%s'" %(source_file, target_file))
+    import tarfile, stat
+    f = tarfile.open(target_file, 'w:bz2')
+    f.add(source_file, os.path.basename(source_file))
+    f.close()
+    os.chmod(target_file, stat.S_IRUSR|stat.S_IWUSR | stat.S_IRGRP|stat.S_IWGRP | stat.S_IROTH)
+  else:
+    print ("WARNING! Database file '%s' is not available. Did you run 'bob_dbmanage %s create' ?" % (source_file, arguments.name))
+
+def upload_command(subparsers):
+  """Adds a new 'upload' subcommand to your parser"""
+
+  parser = subparsers.add_parser('upload', help=upload.__doc__)
+  parser.add_argument("--destination", default="/idiap/group/torch5spro/databases/latest")
+  parser.set_defaults(func=upload)
+
+  return parser
+
+
+def download(arguments):
+  """For SQLite databases: uploads the db.sql3 database file to a server."""
+  # get the file name of the target db
+  assert len(arguments.files) == 1
+  assert os.path.basename(arguments.files[0]) == 'db.sql3'
+  target_file = arguments.files[0]
+  if os.path.exists(target_file) and not arguments.force:
+    print ("Skipping download of file '%s' since it exists already." % target_file)
+  else:
+    # get URL of database file
+    source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
+    # download
+    import sys, tempfile, tarfile
+    if sys.version_info[0] <= 2:
+      import urllib2 as urllib
+    else:
+      import urllib.request as urllib
+
+    try:
+      print ("Extracting url '%s' to '%s'" %(source_url, target_file))
+      u = urllib.urlopen(source_url)
+      f = tempfile.TemporaryFile()
+      f.write(u.read())
+      t = tarfile.open(fileobj=f, mode = 'r:bz2')
+      t.extract(os.path.basename(target_file), os.path.dirname(target_file))
+      t.close()
+      f.close()
+    except Exception as e:
+      print ("Error while downloading: '%s'" % e)
+
+def download_command(subparsers):
+  """Adds a new 'download' subcommand to your parser"""
+
+  parser = subparsers.add_parser('download', help=download.__doc__)
+  parser.add_argument("--source", default="http://www.idiap.ch/software/bob/databases/latest/")
+  parser.add_argument("--force", action='store_true', help = "Overwrite existing database files?")
+  parser.set_defaults(func=download)
+
+  return parser
+
+
 def print_files(arguments):
   """Prints the current location of raw database files."""
 
@@ -72,6 +142,7 @@ def files_command(subparsers):
   parser.set_defaults(func=print_files)
 
   return parser
+
 
 def version(arguments):
   """Outputs the database version"""
@@ -164,6 +235,8 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
 
     if type in ('sqlite',):
       dbshell_command(subparsers)
+      upload_command(subparsers)
+      download_command(subparsers)
 
     if files is not None:
       files_command(subparsers)

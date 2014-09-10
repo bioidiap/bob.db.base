@@ -17,6 +17,26 @@ def files_all(args):
     parsed = args.parser.parse_args([name, 'files'])
     parsed.func(parsed)
 
+
+def upload_all(args):
+  """Executes all the 'upload' commands from SQLite databases"""
+
+  for name in [k.name() for k in args.modules if k.type() in ('sqlite',)]:
+    parsed = args.parser.parse_args([name, 'upload'])
+    parsed.destination = args.destination
+    parsed.func(parsed)
+
+
+def download_all(args):
+  """Executes all the 'download' commands from SQLite databases"""
+
+  for name in [k.name() for k in args.modules if k.type() in ('sqlite',)]:
+    parsed = args.parser.parse_args([name, 'download'])
+    parsed.source = args.source
+    parsed.force = args.force
+    parsed.func(parsed)
+
+
 def create_all(args):
   """Executes all the default create commands from individual databases"""
 
@@ -88,7 +108,7 @@ def add_all_commands(parser, top_subparser, modules):
   attach the options from those.
   """
 
-  from .driver import files_command, version_command
+  from .driver import files_command, version_command, upload_command, download_command
 
   # creates a top-level parser for this database
   top_level = top_subparser.add_parser('all',
@@ -102,6 +122,16 @@ def add_all_commands(parser, top_subparser, modules):
   files_parser.set_defaults(func=files_all)
   files_parser.set_defaults(parser=parser)
   files_parser.set_defaults(modules=modules)
+
+  upload_parser = upload_command(subparsers)
+  upload_parser.set_defaults(func=upload_all)
+  upload_parser.set_defaults(parser=parser)
+  upload_parser.set_defaults(modules=modules)
+
+  download_parser = download_command(subparsers)
+  download_parser.set_defaults(func=download_all)
+  download_parser.set_defaults(parser=parser)
+  download_parser.set_defaults(modules=modules)
 
   create_parser = subparsers.add_parser('create',
       help="create all databases with default settings")
