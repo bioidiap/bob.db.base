@@ -107,8 +107,8 @@ def download(arguments):
     try:
       print ("Extracting url '%s' to '%s'" %(source_url, target_file))
       u = urllib.urlopen(source_url)
-      f = tempfile.TemporaryFile()
-      f.write(u.read())
+      f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
+      open(f.name, 'wb').write(u.read())
       t = tarfile.open(fileobj=f, mode = 'r:bz2')
       t.extract(os.path.basename(target_file), os.path.dirname(target_file))
       t.close()
