@@ -60,6 +60,7 @@ def dbshell_command(subparsers):
 def print_files(arguments):
   """Prints the current location of raw database files."""
 
+  print ("Files for database '%s':" % arguments.name)
   for k in arguments.files: print(k)
 
   return 0
@@ -164,7 +165,7 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
     if type in ('sqlite',):
       dbshell_command(subparsers)
 
-    if files:
+    if files is not None:
       files_command(subparsers)
 
     return subparsers
