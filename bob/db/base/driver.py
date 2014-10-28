@@ -245,7 +245,7 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
 
   @abc.abstractmethod
   def add_commands(self, parser):
-    '''Adds commands to a given (argparse) parser.
+    '''Adds commands to a given (:py:mod:`argparse`) parser.
 
     This method, effectively, allows you to define special commands that your
     database will be able to perform when called from the common driver like
@@ -253,15 +253,15 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
 
     You are not obliged to overwrite this method. If you do, you will have the
     chance to establish your own commands. You don't have to worry about stock
-    commands such as ``files`` or ``version``. They will be automatically
-    hooked-in depending on the values you return for ``type()`` and
-    ``files()``.
+    commands such as :py:meth:`files` or :py:meth:`version`. They will be automatically
+    hooked-in depending on the values you return for :py:meth:`type` and
+    :py:meth:`files`.
 
     Keyword arguments
 
     parser
-      An instance of a argparse.Parser that you can customize, i.e., call
-      ``add_argument()`` on.
+      An instance of a :py:class:`argparse.ArgumentParser` that you can customize, i.e., call
+      :py:meth:`argparse.ArgumentParser.add_argument` on.
     '''
     return
 

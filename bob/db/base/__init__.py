@@ -27,3 +27,6 @@ def get_config():
   return retval.strip()
 
 from . import utils, driver
+
+# gets sphinx autodoc done right - don't remove it
+__all__ = [_ for _ in dir() if not _.startswith('_')]

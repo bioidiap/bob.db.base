@@ -8,6 +8,9 @@
 
 .. todolist::
 
+.. todo::
+   Improve the documentation by providing a users guide and a development guide.
+
 |project| provides an API to easily query and interface with well known
 database protocols. A |project| database contains information about the
 organization of the files, functions to query information such as the data
@@ -24,7 +27,7 @@ externalize many of them in Satellite Packages.
 Reference
 ---------
 
-This section contains the reference guide for ``bob.db.base``.
+This section contains the reference guide for :py:mod:`bob.db.base`.
 
 .. automodule:: bob.db.base
 

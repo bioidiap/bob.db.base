@@ -11,7 +11,7 @@ setup(
 
     name='bob.db.base',
     version=version,
-    description='Database Bindings API',
+    description='Bob\'s Basic Database API',
     url='http://github.com/bioidiap/bob.db.base',
     license='BSD',
     author='Andre Anjos',
@@ -31,23 +31,24 @@ setup(
     namespace_packages=[
       "bob",
       "bob.db",
-      ],
+    ],
 
     entry_points={
       'console_scripts': [
         'bob_dbmanage.py = bob.db.base.script.dbmanage:main',
-        ],
+      ],
 
-      },
+    },
 
     classifiers = [
-      'Development Status :: 3 - Alpha',
+      'Framework :: Bob',
+      'Development Status :: 4 - Beta',
       'Intended Audience :: Developers',
       'License :: OSI Approved :: BSD License',
       'Natural Language :: English',
       'Programming Language :: Python',
       'Programming Language :: Python :: 3',
       'Topic :: Software Development :: Libraries :: Python Modules',
-      ],
+    ],
 
-    )
+)
