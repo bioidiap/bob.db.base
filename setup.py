@@ -5,7 +5,8 @@
 
 from setuptools import setup, find_packages
 
-version = '2.0.0a0'
+# Define package version
+version = open("version.txt").read().rstrip()
 
 setup(
 
