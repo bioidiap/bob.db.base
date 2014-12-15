@@ -87,7 +87,7 @@ def upload_command(subparsers):
 
 
 def download(arguments):
-  """For SQLite databases: uploads the db.sql3 database file to a server."""
+  """For SQLite databases: Downloads the db.sql3 database file from a server."""
   # get the file name of the target db
   assert len(arguments.files) == 1
   assert os.path.basename(arguments.files[0]) == 'db.sql3'
