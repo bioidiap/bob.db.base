@@ -7,9 +7,9 @@
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
    :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.base/master/index.html
 .. image:: https://travis-ci.org/bioidiap/bob.db.base.svg?branch=master
-   :target: https://travis-ci.org/bioidiap/bob.db.base
-.. image:: https://coveralls.io/repos/bioidiap/bob.db.base/badge.png
-   :target: https://coveralls.io/r/bioidiap/bob.db.base
+   :target: https://travis-ci.org/bioidiap/bob.db.base?branch=master
+.. image:: https://coveralls.io/repos/bioidiap/bob.db.base/badge.png?branch=master
+   :target: https://coveralls.io/r/bioidiap/bob.db.base?branch=master
 .. image:: https://img.shields.io/badge/github-master-0000c0.png
    :target: https://github.com/bioidiap/bob.db.base/tree/master
 .. image:: http://img.shields.io/pypi/v/bob.db.base.png
