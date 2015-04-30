@@ -1,34 +1,34 @@
 language: python
+env:
+  global:
+  - secure: F3a3XTtOu6FYrCVPjV+86xT78VHDxP56ZOV4lq+zeRDNjNxXsl6R6/ZagWnoHXyR+P54tFzsNSoj250R+TafUZvClSKS6d8VYCsb79PBl2NB4cwiv3R/tlhLwx+x+TEVwHj7vuk6aCozb8+XjmfiqQWpGPvny2u9V3BAGFnywlI=
+  - secure: OvT4/SZCk8JvC4VLOuGCkljHkhvDRLhwgj2CtguNsYeOiUNwrijdxZw7NG/aa1lKYKEPgYcCMbdW7ymrMHyiN3S0KNZNBRZJNOkCCnU2JbIvpd8bH4F/ezh3+qPz15igZHLf2B2WIo0bu/PqJt62I4XFFMMup8rnUBeM5GxZ5UE=
 matrix:
   include:
   - python: 2.6
   - python: 2.7
     env:
-    - secure: F3a3XTtOu6FYrCVPjV+86xT78VHDxP56ZOV4lq+zeRDNjNxXsl6R6/ZagWnoHXyR+P54tFzsNSoj250R+TafUZvClSKS6d8VYCsb79PBl2NB4cwiv3R/tlhLwx+x+TEVwHj7vuk6aCozb8+XjmfiqQWpGPvny2u9V3BAGFnywlI=
-    - secure: OvT4/SZCk8JvC4VLOuGCkljHkhvDRLhwgj2CtguNsYeOiUNwrijdxZw7NG/aa1lKYKEPgYcCMbdW7ymrMHyiN3S0KNZNBRZJNOkCCnU2JbIvpd8bH4F/ezh3+qPz15igZHLf2B2WIo0bu/PqJt62I4XFFMMup8rnUBeM5GxZ5UE=
     - BOB_DOCUMENTATION_SERVER=https://www.idiap.ch/software/bob/docs/latest/bioidiap/%s/master
-  - python: 3.2
-    env:
-    - NUMPYSPEC===1.7.1
-    - SPHINXSPEC===1.2
+    - BOB_UPLOAD_WHEEL=1
   - python: 3.3
-    env:
-    - NUMPYSPEC===1.8.0
+  - python: 3.4
 before_install:
 - sudo add-apt-repository -y ppa:biometrics/bob
 - sudo apt-get update -qq
 - sudo apt-get install -qq --force-yes libboost-all-dev libblitz1-dev libhdf5-serial-dev texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-- if [ -n "${NUMPYSPEC}" ]; then sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran; fi
-- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC; fi
-- pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel sphinx$SPHINXSPEC matplotlib==1.3.1 nose==1.3.0 jinja2==2.6 cpp-coveralls pygments==1.6
+- pip install --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel sphinx nose jinja2 coverage cpp-coveralls pygments
+- pip install --find-links https://www.idiap.ch/software/bob/wheels/travis/ --use-wheel -r requirements.txt
 install:
 - python bootstrap-buildout.py
-- ./bin/buildout
+- ./bin/buildout buildout:develop=. buildout:extensions=bob.buildout buildout:auto-checkout=
 script:
-- ./bin/python -c 'from bob.db.base import get_config; print(get_config())'
+- ./bin/python -c 'import pkg_resources; from bob.db.base import get_config; print(get_config())'
 - ./bin/coverage run --source=bob.db.base ./bin/nosetests -sv
 - ./bin/sphinx-build -b doctest doc sphinx
 - ./bin/sphinx-build -b html doc sphinx
 after_success:
 - coveralls
-- ./src/bob.extension/scripts/upload-sphinx.sh
+- wget https://raw.githubusercontent.com/bioidiap/bob.extension/master/scripts/upload-{sphinx,wheel}.sh
+- chmod a+x upload-sphinx.sh upload-wheel.sh
+- ./upload-sphinx.sh
+- ./upload-wheel.sh

@@ -3,7 +3,10 @@
 # Andre Anjos <andre.anjos@idiap.ch>
 # Mon 16 Apr 08:18:08 2012 CEST
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, dist
+dist.Distribution(dict(setup_requires=['bob.extension']))
+from bob.extension.utils import load_requirements
+build_requires = load_requirements()
 
 # Define package version
 version = open("version.txt").read().rstrip()
@@ -23,11 +26,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
 
-    install_requires=[
-      'setuptools',
-      'sqlalchemy',
-      'bob.io.base',
-    ],
+    install_requires=build_requires,
 
     namespace_packages=[
       "bob",
