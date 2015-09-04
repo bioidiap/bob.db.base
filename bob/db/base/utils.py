@@ -99,7 +99,7 @@ class SQLiteConnector(object):
       apsw_con = apsw.Connection(self.filename, vfs=self.vfs, flags=flags)
       return connect(apsw_con)
 
-    return connect(self.filename)
+    return connect(self.filename, check_same_thread=False)
 
   def create_engine(self, echo=False):
     """Returns an SQLAlchemy engine"""
