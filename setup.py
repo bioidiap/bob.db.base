@@ -28,10 +28,7 @@ setup(
 
     install_requires=build_requires,
 
-    namespace_packages=[
-      "bob",
-      "bob.db",
-    ],
+
 
     entry_points={
       'console_scripts': [
