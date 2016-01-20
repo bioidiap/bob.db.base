@@ -5,7 +5,6 @@ env:
   - secure: OvT4/SZCk8JvC4VLOuGCkljHkhvDRLhwgj2CtguNsYeOiUNwrijdxZw7NG/aa1lKYKEPgYcCMbdW7ymrMHyiN3S0KNZNBRZJNOkCCnU2JbIvpd8bH4F/ezh3+qPz15igZHLf2B2WIo0bu/PqJt62I4XFFMMup8rnUBeM5GxZ5UE=
 matrix:
   include:
-  - python: 2.6
   - python: 2.7
     env:
     - BOB_DOCUMENTATION_SERVER=https://www.idiap.ch/software/bob/docs/latest/bioidiap/%s/master
@@ -14,6 +13,7 @@ matrix:
     env:
     - BOB_UPLOAD_WHEEL="--python-tag py3"
   - python: 3.4
+  - python: 3.5
 before_install:
 - sudo add-apt-repository -y ppa:biometrics/bob
 - sudo apt-get update -qq
