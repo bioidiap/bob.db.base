@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 
-import bob.db.base.utils
+from . import utils
 
 from .file import File
 
@@ -48,7 +48,7 @@ class SQLiteDatabase(object):
     if not os.path.exists(sqlite_file):
       self.m_session = None
     else:
-      self.m_session = bob.db.base.utils.session_try_readonly('sqlite', sqlite_file)
+      self.m_session = utils.session_try_readonly('sqlite', sqlite_file)
     # call base class constructor
     # also set the File class that is used (needed for a query)
     # assert the given file class is derived from the File class
