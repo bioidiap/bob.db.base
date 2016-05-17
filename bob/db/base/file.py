@@ -26,6 +26,46 @@ class File(object):
   """Abstract class that define basic properties of File objects.
   Your file instance should have at least the self.id and self.path properties."""
 
+  def __init__(self, client_id, path, file_id = None):
+    """**Constructor Documentation**
+
+    Initialize the File object with the minimum required data.
+
+    Parameters:
+
+    client_id : various type
+      The id of the client this file belongs to.
+      Its type depends on your implementation.
+      If you use an SQL database, this should be an SQL type like Integer or String.
+
+    path : str
+      The path to this file, relative to the basic directory.
+      If you use an SQL database, this should be the SQL type String.
+      Please do not specify any file extensions.
+
+    file_id : various type
+      The id of the file.
+      Its type depends on your implementation.
+      If you use an SQL database, this should be an SQL type like Integer or String.
+      If you are using an automatically determined file id, you don't need to specify this parameter.
+    """
+
+    # just copy the information
+    self.client_id = client_id
+    """The id of the client, to which this file belongs to."""
+    
+    self.path = path
+    """A relative path, which includes file name but excludes file extension"""
+
+    # set file id only, when specified
+    if file_id:
+      self.id = file_id
+      """A unique identifier of the file."""
+    else:
+      # check that the file id at least exists
+      if not hasattr(self, 'id'):
+        raise NotImplementedException("Please either specify the file id as parameter, or create an 'id' member variable in the derived class that is automatically determined (e.g. by SQLite)")
+
   def __lt__(self, other):
     """This function defines the order on the File objects. File objects are always ordered by their ID, in ascending order."""
     return self.id < other.id
@@ -97,3 +137,28 @@ class File(object):
     # get the path
     path = self.make_path(directory or '', extension or '')
     return bob.io.base.load(path)
+
+
+
+  def get_file_id(self):
+    """
+    Return the ID of the file.
+    """
+
+    return self.id
+
+
+  def get_path(self):
+    """
+    Return a relative path of this file.
+    """
+
+    return self.path
+
+
+  def get_client_id(self):
+    """
+    Return ID of the client that this file belongs to.
+    """
+
+    return self.client_id
