@@ -26,17 +26,12 @@ class File(object):
   """Abstract class that define basic properties of File objects.
   Your file instance should have at least the self.id and self.path properties."""
 
-  def __init__(self, client_id, path, file_id = None):
+  def __init__(self, path, file_id = None):
     """**Constructor Documentation**
 
     Initialize the File object with the minimum required data.
 
     Parameters:
-
-    client_id : various type
-      The id of the client this file belongs to.
-      Its type depends on your implementation.
-      If you use an SQL database, this should be an SQL type like Integer or String.
 
     path : str
       The path to this file, relative to the basic directory.
@@ -49,10 +44,6 @@ class File(object):
       If you use an SQL database, this should be an SQL type like Integer or String.
       If you are using an automatically determined file id, you don't need to specify this parameter.
     """
-
-    # just copy the information
-    self.client_id = client_id
-    """The id of the client, to which this file belongs to."""
     
     self.path = path
     """A relative path, which includes file name but excludes file extension"""
@@ -138,27 +129,3 @@ class File(object):
     path = self.make_path(directory or '', extension or '')
     return bob.io.base.load(path)
 
-
-
-  def get_file_id(self):
-    """
-    Return the ID of the file.
-    """
-
-    return self.id
-
-
-  def get_path(self):
-    """
-    Return a relative path of this file.
-    """
-
-    return self.path
-
-
-  def get_client_id(self):
-    """
-    Return ID of the client that this file belongs to.
-    """
-
-    return self.client_id
