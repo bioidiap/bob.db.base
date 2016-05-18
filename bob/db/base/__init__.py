@@ -19,7 +19,7 @@ def get_config():
 
 from . import utils, driver
 from .file import File
-from .database import SQLiteDatabase
+from .database import Database, SQLiteDatabase
 
 # gets sphinx autodoc done right - don't remove it
 __all__ = [_ for _ in dir() if not _.startswith('_')]
