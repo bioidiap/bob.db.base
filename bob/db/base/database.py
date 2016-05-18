@@ -49,10 +49,6 @@ class SQLiteDatabase(object):
       self.m_session = None
     else:
       self.m_session = utils.session_try_readonly('sqlite', sqlite_file)
-    # call base class constructor
-    
-    # also set the File class that is used (needed for a query)
-    from .file import File
     
     # assert the given file class is derived from the File class
     assert issubclass(file_class, File)
