@@ -8,7 +8,11 @@ that can be used in Biometry, Machine Learning or Pattern Classification."""
 
 import pkg_resources
 
+from . import utils, driver
+from .file import File
+from .database import Database, SQLiteDatabase
 __version__ = pkg_resources.require(__name__)[0].version
+
 
 def get_config():
   """Returns a string containing the configuration information.
@@ -16,10 +20,6 @@ def get_config():
   import bob.extension
   return bob.extension.get_config(__name__)
 
-
-from . import utils, driver
-from .file import File
-from .database import Database, SQLiteDatabase
 
 # gets sphinx autodoc done right - don't remove it
 __all__ = [_ for _ in dir() if not _.startswith('_')]
