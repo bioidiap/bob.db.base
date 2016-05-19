@@ -26,10 +26,6 @@ from .file import File
 class Database(object):
   """Low-level Database API to be used within bob."""
 
-  def __init__(self, original_directory=None):
-    super(Database, self).__init__()
-    self.original_directory = original_directory
-
   def check_parameters_for_validity(self, parameters, parameter_description, valid_parameters, default_parameters=None):
     """Checks the given parameters for validity, i.e., if they are contained in the set of valid parameters.
     It also assures that the parameters form a tuple or a list.
@@ -137,7 +133,6 @@ class SQLiteDatabase(Database):
 
     Other keyword arguments passed to the :py:class:`bob.db.verification.utils.Database` constructor.
     """
-
     self.m_sqlite_file = sqlite_file
     if not os.path.exists(sqlite_file):
       self.m_session = None
