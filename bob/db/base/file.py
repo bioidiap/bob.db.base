@@ -26,7 +26,7 @@ class File(object):
   """Abstract class that define basic properties of File objects.
   Your file instance should have at least the self.id and self.path properties."""
 
-  def __init__(self, path, file_id = None):
+  def __init__(self, path, file_id=None):
     """**Constructor Documentation**
 
     Initialize the File object with the minimum required data.
@@ -44,7 +44,7 @@ class File(object):
       If you use an SQL database, this should be an SQL type like Integer or String.
       If you are using an automatically determined file id, you don't need to specify this parameter.
     """
-    
+
     self.path = path
     """A relative path, which includes file name but excludes file extension"""
 
@@ -55,7 +55,7 @@ class File(object):
     else:
       # check that the file id at least exists
       if not hasattr(self, 'id'):
-        raise NotImplementedException("Please either specify the file id as parameter, or create an 'id' member variable in the derived class that is automatically determined (e.g. by SQLite)")
+        raise NotImplementedError("Please either specify the file id as parameter, or create an 'id' member variable in the derived class that is automatically determined (e.g. by SQLite)")
 
   def __lt__(self, other):
     """This function defines the order on the File objects. File objects are always ordered by their ID, in ascending order."""
@@ -128,4 +128,3 @@ class File(object):
     # get the path
     path = self.make_path(directory or '', extension or '')
     return bob.io.base.load(path)
-
