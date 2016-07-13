@@ -250,3 +250,19 @@ class SQLiteDatabase(Database):
       for f in file_objects:
         path_dict[f.path] = f
       return [path_dict[path] for path in paths]
+
+  def uniquify(self, file_list):
+    """Sorts the given list of File objects and removes duplicates from it.
+    Keyword parameters:
+    file_list : [:py:class:`File`]
+      A list of File objects to be handled.
+      Also other objects can be handled, as long as they are sortable.
+    Returns
+      A sorted copy of the given ``file_list`` with the duplicates removed.
+    """
+    return sorted(set(file_list))
+
+  def all_files(self, **kwargs):
+    """Returns the list of all File objects that satisfy your query.
+    For possible keyword arguments, please check the :py:meth:`objects` function."""
+    return self.uniquify(self.objects(**kwargs))
