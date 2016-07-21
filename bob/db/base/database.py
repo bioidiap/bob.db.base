@@ -112,6 +112,29 @@ class Database(object):
     # tests passed -> return the parameter
     return parameter
 
+  def convert_names_to_highlevel(self, names, low_level_names, high_level_names):
+    """
+    Converts group names from a low level to high level API
+    This is useful for example when you want to return db.groups()
+    for the bob.bio.db. Your instance of the database should already have
+    self.low_level_names and self.high_level_names initialized.
+    """
+    if names is None:
+      return None
+    mapping = dict(zip(low_level_names, high_level_names))
+    if isinstance(names, str):
+      return mapping.get(names)
+    return [mapping[g] for g in names]
+
+  def convert_names_to_lowlevel(self, names, low_level_names, high_level_names):
+    """ Same as convert_names_to_highlevel but on reverse """
+    if names is None:
+      return None
+    mapping = dict(zip(high_level_names, low_level_names))
+    if isinstance(names, str):
+      return mapping.get(names)
+    return [mapping[g] for g in names]
+
 
 class SQLiteDatabase(Database):
   """This class can be used for handling SQL databases.
