@@ -113,8 +113,10 @@ def download(arguments):
       t.extract(os.path.basename(target_file), os.path.dirname(target_file))
       t.close()
       f.close()
+      return False
     except Exception as e:
       print ("Error while downloading: '%s'" % e)
+      return True
 
 def download_command(subparsers):
   """Adds a new 'download' subcommand to your parser"""

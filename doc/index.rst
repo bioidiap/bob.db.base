@@ -26,6 +26,22 @@ often require to store information about pairs of files, the size of such
 databases can become very large. For this reason, we have decided to
 externalize many of them in Satellite Packages.
 
+Documentation
+-------------
+
+.. toctree::
+   :maxdepth: 2
+
+   extend
+   py_api
+
+General functions
++++++++++++++++++
+
+The :py:meth:`bob.db.base.read_annotation_file` method will return a dictionary of annotations of any kind for the given :py:class:`bob.db.base.File`, see :ref:`annotations`.
+In case, no annotation is available for the given file, or the database does not define any annotations, ``None`` is returned.
+
+
 Reference
 ---------
 
