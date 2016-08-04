@@ -175,10 +175,8 @@ class SQLiteDatabase(Database):
         #   which might fail in some conditions, e.g., when this destructor is called during the exit of the python interpreter
         self.m_session.close()
         self.m_session.bind.dispose()
-      except TypeError:
+      except (TypeError, AttributeError, KeyError):
         # ... I can just ignore the according exception...
-        pass
-      except AttributeError:
         pass
 
   def is_valid(self):
