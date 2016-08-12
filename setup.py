@@ -15,8 +15,8 @@ setup(
 
     name='bob.db.base',
     version=version,
-    description='Bob\'s Basic Database API',
-    url='http://github.com/bioidiap/bob.db.base',
+    description='Basic Database Frontend API for Bob',
+    url='http://gitlab.idiap.ch/bob/bob.db.base',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
@@ -28,8 +28,6 @@ setup(
     zip_safe=False,
 
     install_requires=build_requires,
-
-
 
     entry_points={
       'console_scripts': [
