@@ -121,8 +121,14 @@ def download(arguments):
 def download_command(subparsers):
   """Adds a new 'download' subcommand to your parser"""
 
+  if 'DOCSERVER' in os.environ:
+    USE_SERVER=os.environ['DOCSERVER']
+  else:
+    USE_SERVER='https://www.idiap.ch'
+
   parser = subparsers.add_parser('download', help=download.__doc__)
-  parser.add_argument("--source", default="http://www.idiap.ch/software/bob/databases/latest/")
+  parser.add_argument("--source",
+      default="%s/software/bob/databases/latest/" % USE_SERVER)
   parser.add_argument("--force", action='store_true', help = "Overwrite existing database files?")
   parser.set_defaults(func=download)
 
