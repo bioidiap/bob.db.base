@@ -275,10 +275,6 @@ class SQLiteDatabase(Database):
     def uniquify(self, file_list):
         """Sorts the given list of File objects and removes duplicates from it.
 
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
         Args:
             file_list: [:py:class:`File`] A list of File objects to be handled. Also other objects can be handled, as long as they are sortable.
 
