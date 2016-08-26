@@ -6,7 +6,7 @@ For image databases, e.g., the locations of hand-labeled facial landmarks are pr
 Usually, these data is stored in additional text files.
 For most of the available ``bob.db`` databases, there is exactly one text file for each data file.
 
-The function :py:func:`bob.db.verification.utils.read_annotation_file` can be used to read annotation files of different types.
+The function :py:func:`bob.db.base.read_annotation_file` can be used to read annotation files of different types.
 It will output the data as a dictionary, containing a ``key`` and the interpreted read data.
 For landmark locations, the data is returned in **the common way** for bob, which is ``(y, x)``!
 The following formats are currently accepted:

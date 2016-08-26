@@ -151,10 +151,9 @@ class SQLiteDatabase(Database):
           The file name (including full path) of the SQLite file to read or generate.
 
         file_class : a class instance
-          The ``File`` class, which needs to be derived from :py:class:`bob.db.verification.utils.File`.
+          The ``File`` class, which needs to be derived from :py:class:`bob.db.base.File`.
           This is required to be able to :py:meth:`query` the databases later on.
 
-        Other keyword arguments passed to the :py:class:`bob.db.verification.utils.Database` constructor.
         """
         self.m_sqlite_file = sqlite_file
         if not os.path.exists(sqlite_file):

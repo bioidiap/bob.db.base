@@ -20,7 +20,7 @@
 import os
 import bob.core
 import logging
-logger = logging.getLogger("bob.db.verification.utils")
+logger = logging.getLogger("bob.db.base")
 
 _idiap_annotations = {
   1 : 'reyeo',
