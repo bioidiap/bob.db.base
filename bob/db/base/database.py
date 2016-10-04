@@ -116,7 +116,7 @@ class Database(object):
         """
         Converts group names from a low level to high level API
         This is useful for example when you want to return db.groups()
-        for the bob.bio.db. Your instance of the database should already have
+        for the bob.bio.base. Your instance of the database should already have
         self.low_level_names and self.high_level_names initialized.
         """
         if names is None:
