@@ -1,6 +1,5 @@
 .. vim: set fileencoding=utf-8 :
-.. Andre Anjos <andre.dos.anjos@gmail.com>
-.. Tue 15 Oct 17:41:52 2013
+.. Thu 13 Oct 2016 10:35:57 CEST
 
 ============
  Python API
@@ -9,19 +8,19 @@
 This section includes information for using the Python API of ``bob.db.base``.
 
 
-Classes
--------
+This section contains the reference guide for :py:mod:`bob.db.base`.
 
-.. autoclass:: bob.db.base.File
-
-.. autoclass:: bob.db.base.Database
-.. autoclass:: bob.db.base.SQLiteDatabase
+.. automodule:: bob.db.base
 
 
-Functions
----------
+Database Handling Utilities
+---------------------------
 
-.. autofunction:: bob.db.base.read_annotation_file
+.. automodule:: bob.db.base.utils
 
 
+Driver API
+----------
+
+.. automodule:: bob.db.base.driver
 
