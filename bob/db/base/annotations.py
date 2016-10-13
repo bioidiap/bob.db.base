@@ -1,21 +1,5 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
-# @date:   Wed Nov 13 11:56:53 CET 2013
-#
-# Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, version 3 of the License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import bob.core
@@ -50,20 +34,31 @@ _idiap_annotations = {
 
 def read_annotation_file(file_name, annotation_type):
   """This function provides default functionality to read annotation files.
-  It returns a dictionary with the keypoint name as key and the position (y,x) as value, and maybe some additional annotations.
 
-  Keyword Parameters:
 
-  file_name : str
-    The full path of the annotation file to read
+  Parameters:
 
-  annotation_type : str
-    The type of the annotation file that should be read.
-    The following annotation_types are supported:
+    file_name : str
+      The full path of the annotation file to read
 
-    * 'eyecenter': The file contains a single row with four entries: 're_x re_y le_x le_y'
-    * 'named': The file contains named annotations, one per line, e.g.: 'reye re_x re_y' or 'pose 25.7'
-    * 'idiap': The file contains enumerated annotations, one per line, e.g.: '1 key1_x key1_y', and maybe some additional annotations like gender, age, ...
+    annotation_type : str
+      The type of the annotation file that should be read. The following
+      annotation_types are supported:
+
+        * ``eyecenter``: The file contains a single row with four entries:
+          ``re_x re_y le_x le_y``
+        * ``named``: The file contains named annotations, one per line, e.g.:
+          ``reye re_x re_y`` or ``pose 25.7``
+        * ``idiap``: The file contains enumerated annotations, one per line,
+          e.g.: ``1 key1_x key1_y``, and maybe some additional annotations like
+          gender, age, ...
+
+
+  Returns:
+
+    dict: A python dictionary with the keypoint name as key and the
+      position ``(y,x)`` as value, and maybe some additional annotations.
+
   """
 
   if not file_name:

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Andre Anjos <andre.anjos@idiap.ch>
 # Mon 13 Aug 2012 16:19:18 CEST
 
 """This module defines, among other less important constructions, a management
@@ -10,6 +9,8 @@ manage installed files.
 
 import os
 import abc
+import six
+
 
 def dbshell(arguments):
   """Drops you into a database shell"""
@@ -47,6 +48,7 @@ def dbshell(arguments):
     return signal.SIGTERM
 
   return p.returncode
+
 
 def dbshell_command(subparsers):
   """Adds a new dbshell subcommand to your subparser"""
@@ -118,6 +120,7 @@ def download(arguments):
       print ("Error while downloading: '%s'" % e)
       return True
 
+
 def download_command(subparsers):
   """Adds a new 'download' subcommand to your parser"""
 
@@ -143,6 +146,7 @@ def print_files(arguments):
 
   return 0
 
+
 def files_command(subparsers):
   """Adds a new 'files' subcommand to your parser"""
 
@@ -159,6 +163,7 @@ def version(arguments):
 
   return 0
 
+
 def version_command(subparsers):
 
   parser = subparsers.add_parser('version', help=version.__doc__)
@@ -166,18 +171,17 @@ def version_command(subparsers):
 
   return parser
 
-def with_metaclass(meta, *bases):
-  """Create a base class with a metaclass (works with Python2 and Python3)."""
 
-  return meta("NewBase", bases, {})
-
-class Interface(with_metaclass(abc.ABCMeta, object)):
+@six.add_metaclass(abc.ABCMeta)
+class Interface(object):
   """Base manager for Bob databases"""
+
 
   @abc.abstractmethod
   def name(self):
     '''Returns a simple name for this database, w/o funny characters, spaces'''
     return
+
 
   @abc.abstractmethod
   def files(self):
@@ -188,10 +192,12 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
     '''
     return
 
+
   @abc.abstractmethod
   def version(self):
     '''Returns the current version number defined in setup.py'''
     return
+
 
   @abc.abstractmethod
   def type(self):
@@ -206,6 +212,7 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
     Use the special name 'builtin' if this database is an integral part of Bob.
     '''
     return
+
 
   def setup_parser(self, parser, short_description, long_description):
     '''Sets up the base parser for this database.
@@ -250,6 +257,7 @@ class Interface(with_metaclass(abc.ABCMeta, object)):
       files_command(subparsers)
 
     return subparsers
+
 
   @abc.abstractmethod
   def add_commands(self, parser):
