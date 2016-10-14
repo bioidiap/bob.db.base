@@ -1,5 +1,2 @@
-# Not available in Python 2.7
+# Not available in Python 2.7, but ok in Python 3.x
 py:exc ValueError
-
-# Sphinx bug! See: https://github.com/sphinx-doc/sphinx/issues/3048
-py:class bob.db.base.database.Database
