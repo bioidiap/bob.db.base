@@ -21,7 +21,7 @@ def files_all(args):
 def upload_all(args):
   """Executes all the 'upload' commands from SQLite databases"""
 
-  for name in [k.name() for k in args.modules if k.type() in ('sqlite',)]:
+  for name in [k.name() for k in args.modules if k.files()]:
     parsed = args.parser.parse_args([name, 'upload'])
     parsed.destination = args.destination
     parsed.func(parsed)
@@ -30,7 +30,7 @@ def upload_all(args):
 def download_all(args):
   """Executes all the 'download' commands from SQLite databases"""
 
-  for name in [k.name() for k in args.modules if k.type() in ('sqlite',)]:
+  for name in [k.name() for k in args.modules if k.files()]:
     parsed = args.parser.parse_args([name, 'download'])
     parsed.source = args.source
     parsed.force = args.force
@@ -44,12 +44,12 @@ def create_all(args):
   databases = 0
   total_start = time.time()
 
-  sqlite_dbs = [k.name() for k in args.modules if k.type() in ('sqlite',)]
+  create_dbs = [k.name() for k in args.modules if k.files()]
 
   if args.verbose >= 1:
-    print('### Running %d SQLite database creation commands...' % len(sqlite_dbs))
+    print('### Running %d database creation commands...' % len(create_dbs))
 
-  for name in sqlite_dbs:
+  for name in create_dbs:
 
     start_time = time.time()
     databases += 1
