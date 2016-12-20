@@ -18,12 +18,12 @@ def test_download_01():
   tmpdir = tempfile.mkdtemp()
   try:
     arguments = Namespace(files=[tmpdir+'/db.sql3'], force=False,
-        name='non_existing_db', type='sqlite', version='0.9.0',
+        name='does_not_exist', test_dir=tmpdir, version='0.9.0',
         source='%s/software/bob/databases/latest/' % USE_SERVER)
-    assert download(arguments) == True
+    assert download(arguments) == 1 #error #error #error #error
     arguments = Namespace(files=[tmpdir+'/db.sql3'], force=False,
-        name='biowave_test', type='sqlite', version='0.9.0',
+        name='banca', test_dir=tmpdir, version='0.9.0',
         source='%s/software/bob/databases/latest/' % USE_SERVER)
-    assert download(arguments) == False
+    assert download(arguments) == 0 #success
   finally:
     shutil.rmtree(tmpdir)

@@ -8,6 +8,7 @@
 
 import os
 
+
 class null(object):
   """A look-alike stream that discards the input"""
 
@@ -20,6 +21,7 @@ class null(object):
     """Flushes the stream"""
 
     pass
+
 
 def apsw_is_available():
   """Checks lock-ability for SQLite on the current file system"""
@@ -39,8 +41,19 @@ def apsw_is_available():
   # if you get to this point, all seems OK
   return True
 
+
 class SQLiteConnector(object):
-  '''An object that handles the connection to SQLite databases.'''
+  '''An object that handles the connection to SQLite databases.
+
+  Parameters:
+
+    filename (str): The name of the file containing the SQLite database
+
+    readonly (bool): Should I try and open the database in read-only mode?
+
+    lock (str): Any vfs name as output by apsw.vfsnames()
+
+  '''
 
   @staticmethod
   def filesystem_is_lockable(database):
@@ -62,20 +75,8 @@ class SQLiteConnector(object):
 
   APSW_IS_AVAILABLE = apsw_is_available()
 
+
   def __init__(self, filename, readonly=False, lock=None):
-    """Initializes the connector
-
-    Keyword arguments
-
-    filename
-      The name of the file containing the SQLite database
-
-    readonly
-      Should I try and open the database in read-only mode?
-
-    lock
-      Any vfs name as output by apsw.vfsnames()
-    """
 
     self.readonly = readonly
     self.vfs = lock
@@ -86,6 +87,7 @@ class SQLiteConnector(object):
         not self.APSW_IS_AVAILABLE and not self.lockable:
         import warnings
         warnings.warn('Got a request for an SQLite connection using APSW, but I cannot find an sqlite3-compatible installed version of that module (or the module is not installed at all). Furthermore, the place where the database is sitting ("%s") is on a filesystem that does **not** seem to support locks. I\'m returning a stock connection and hopping for the best.' % (filename,))
+
 
   def __call__(self):
 
@@ -101,6 +103,7 @@ class SQLiteConnector(object):
 
     return connect(self.filename, check_same_thread=False)
 
+
   def create_engine(self, echo=False):
     """Returns an SQLAlchemy engine"""
 
@@ -108,12 +111,14 @@ class SQLiteConnector(object):
     from sqlalchemy.pool import NullPool
     return create_engine('sqlite://', creator=self, echo=echo, poolclass=NullPool)
 
+
   def session(self, echo=False):
     """Returns an SQLAlchemy session"""
 
     from sqlalchemy.orm import sessionmaker
     Session = sessionmaker(bind=self.create_engine(echo))
     return Session()
+
 
 def session(dbtype, dbfile, echo=False):
   """Creates a session to an SQLite database"""
@@ -127,12 +132,17 @@ def session(dbtype, dbfile, echo=False):
   return Session()
 
 def session_try_readonly(dbtype, dbfile, echo=False):
-  """Creates a read-only session to an SQLite database. If read-only sessions
-  are not supported by the underlying sqlite3 python DB driver, then a normal
-  session is returned. A warning is emitted in case the underlying filesystem
-  does not support locking properly.
+  """Creates a read-only session to an SQLite database.
 
-  Raises a NotImplementedError if the dbtype is not supported.
+  If read-only sessions are not supported by the underlying sqlite3 python DB
+  driver, then a normal session is returned. A warning is emitted in case the
+  underlying filesystem does not support locking properly.
+
+
+  Raises:
+
+    NotImplementedError: if the dbtype is not supported.
+
   """
 
   if dbtype != 'sqlite':
@@ -141,13 +151,19 @@ def session_try_readonly(dbtype, dbfile, echo=False):
   connector = SQLiteConnector(dbfile, readonly=True, lock='unix-none')
   return connector.session(echo=echo)
 
+
 def create_engine_try_nolock(dbtype, dbfile, echo=False):
-  """Creates an engine connected to an SQLite database with no locks. If
-  engines without locks are not supported by the underlying sqlite3 python DB
-  driver, then a normal engine is returned. A warning is emitted if the
+  """Creates an engine connected to an SQLite database with no locks.
+
+  If engines without locks are not supported by the underlying sqlite3 python
+  DB driver, then a normal engine is returned. A warning is emitted if the
   underlying filesystem does not support locking properly in this case.
 
-  Raises a NotImplementedError if the dbtype is not supported.
+
+  Raises:
+
+    NotImplementedError: if the dbtype is not supported.
+
   """
 
   if dbtype != 'sqlite':
@@ -156,13 +172,19 @@ def create_engine_try_nolock(dbtype, dbfile, echo=False):
   connector = SQLiteConnector(dbfile, lock='unix-none')
   return connector.create_engine(echo=echo)
 
-def session_try_nolock(dbtype, dbfile, echo=False):
-  """Creates a session to an SQLite database with no locks. If sessions without
-  locks are not supported by the underlying sqlite3 python DB driver, then a
-  normal session is returned. A warning is emitted if the underlying filesystem
-  does not support locking properly in this case.
 
-  Raises a NotImplementedError if the dbtype is not supported.
+def session_try_nolock(dbtype, dbfile, echo=False):
+  """Creates a session to an SQLite database with no locks.
+
+  If sessions without locks are not supported by the underlying sqlite3 python
+  DB driver, then a normal session is returned. A warning is emitted if the
+  underlying filesystem does not support locking properly in this case.
+
+
+  Raises:
+
+    NotImplementedError: if the dbtype is not supported.
+
   """
 
   if dbtype != 'sqlite':
@@ -171,16 +193,17 @@ def session_try_nolock(dbtype, dbfile, echo=False):
   connector = SQLiteConnector(dbfile, lock='unix-none')
   return connector.session(echo=echo)
 
+
 def connection_string(dbtype, dbfile, opts={}):
   """Returns a connection string for supported platforms
 
-  Keyword parameters
+  Parameters:
 
-  dbtype
-    The type of database (only 'sqlite' is supported for the time being)
+    dbtype (str): The type of database (only ``sqlite`` is supported for the
+      time being)
 
-  dbfile
-    The location of the file to be used
+    dbfile (str): The location of the file to be used
+
   """
 
   from sqlalchemy.engine.url import URL
