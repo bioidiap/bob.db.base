@@ -61,22 +61,47 @@ def dbshell_command(subparsers):
 
 
 def upload(arguments):
-  """For SQLite databases: uploads the db.sql3 database file to a server."""
-  # get the file name of the target db
-  assert len(arguments.files) == 1
-  assert os.path.basename(arguments.files[0]) == 'db.sql3'
-  source_file = arguments.files[0]
-  target_file = os.path.join(arguments.destination, arguments.name + ".tar.bz2")
+  """Uploads generated metadata to the Idiap build server"""
 
-  if os.path.exists(source_file):
-    print ("Compressing file '%s' to '%s'" %(source_file, target_file))
-    import tarfile, stat
-    f = tarfile.open(target_file, 'w:bz2')
-    f.add(source_file, os.path.basename(source_file))
-    f.close()
-    os.chmod(target_file, stat.S_IRUSR|stat.S_IWUSR | stat.S_IRGRP|stat.S_IWGRP | stat.S_IROTH)
-  else:
-    print ("WARNING! Database file '%s' is not available. Did you run 'bob_dbmanage %s create' ?" % (source_file, arguments.name))
+  import pkg_resources
+  basedir = pkg_resources.resource_filename('bob.db.%s' % arguments.name, '')
+  assert basedir, "Database and package names do not match. Your declared " \
+      "database name should be <name>, if your package is called bob.db.<name>"
+
+  target_file = os.path.join(arguments.destination,
+      arguments.name + ".tar.bz2")
+
+  # check all files exist
+  for p in arguments.files:
+    if not os.path.exists(p):
+      raise IOError("Metadata file `%s' is not available. Did you run " \
+          "`create' before attempting to upload?" % (p,))
+
+  # if destination exists, try to erase it before
+  if os.path.exists(target_file):
+    try:
+      os.unlink(target_file)
+    except Exception as e:
+      print("Cannot erase existing file `%s': %s" % (target_file, e))
+
+  # if you get here, all files are there, ready to package
+  print("Compressing metadata files to `%s'" % (target_file,))
+
+  # compress
+  import tarfile
+
+  f = tarfile.open(target_file, 'w:bz2')
+  for k,p in enumerate(arguments.files):
+    n = os.path.relpath(p, basedir)
+    print("+ [%d/%d] %s" % (k+1, len(arguments.files), n))
+    f.add(p, n)
+  f.close()
+
+  # set permissions for sane Idiap storage
+  import stat
+  perms = stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IROTH
+  os.chmod(target_file, perms)
+
 
 def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
@@ -89,36 +114,50 @@ def upload_command(subparsers):
 
 
 def download(arguments):
-  """For SQLite databases: Downloads the db.sql3 database file from a server."""
-  # get the file name of the target db
-  assert len(arguments.files) == 1
-  assert os.path.basename(arguments.files[0]) == 'db.sql3'
-  target_file = arguments.files[0]
-  if os.path.exists(target_file) and not arguments.force:
-    print ("Skipping download of file '%s' since it exists already." % target_file)
-  else:
-    # get URL of database file
-    source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
-    # download
-    import sys, tempfile, tarfile
-    if sys.version_info[0] <= 2:
-      import urllib2 as urllib
-    else:
-      import urllib.request as urllib
+  """Downloads and uncompresses meta data generated files from Idiap"""
 
-    try:
-      print ("Extracting url '%s' to '%s'" %(source_url, target_file))
-      u = urllib.urlopen(source_url)
-      f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
-      open(f.name, 'wb').write(u.read())
-      t = tarfile.open(fileobj=f, mode = 'r:bz2')
-      t.extract(os.path.basename(target_file), os.path.dirname(target_file))
-      t.close()
-      f.close()
-      return False
-    except Exception as e:
-      print ("Error while downloading: '%s'" % e)
-      return True
+  import pkg_resources
+  basedir = pkg_resources.resource_filename('bob.db.%s' % arguments.name, '')
+  assert basedir, "Database and package names do not match. Your declared " \
+      "database name should be <name>, if your package is called bob.db.<name>"
+
+  # check all files don't exist
+  for p in arguments.files:
+    if os.path.exists(p):
+      if arguments.force:
+        os.unlink(p)
+      else:
+        raise IOError("Metadata file `%s' is already available. Please " \
+            "remove self-generated files before attempting download or " \
+            "--force" % (p,))
+
+  # if you get here, all files aren't there, unpack
+  source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
+
+  # download file from Idiap server, unpack and remove it
+  import sys
+  import tempfile
+  import tarfile
+  import pkg_resources
+  if sys.version_info[0] <= 2:
+    import urllib2 as urllib
+  else:
+    import urllib.request as urllib
+
+  try:
+    print ("Extracting url `%s'" %(source_url,))
+    u = urllib.urlopen(source_url)
+    f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
+    open(f.name, 'wb').write(u.read())
+    t = tarfile.open(fileobj=f, mode='r:bz2')
+    t.extractall(basedir)
+    t.close()
+    f.close()
+    return False
+
+  except Exception as e:
+    print ("Error while downloading: %s" % e)
+    return True
 
 
 def download_command(subparsers):
@@ -248,10 +287,12 @@ class Interface(object):
     # adds some stock commands
     version_command(subparsers)
 
-    if type in ('sqlite',):
-      dbshell_command(subparsers)
+    if files:
       upload_command(subparsers)
       download_command(subparsers)
+
+    if type in ('sqlite',):
+      dbshell_command(subparsers)
 
     if files is not None:
       files_command(subparsers)
