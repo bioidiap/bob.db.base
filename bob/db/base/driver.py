@@ -226,10 +226,11 @@ class Interface(object):
   def files(self):
     '''Returns a python iterable with all auxiliary files needed.
 
-    The values should be take w.r.t. where the python file that declares the
-    database is sitting at.
+    The paths listed by this method should correspond to full paths (not
+    relative ones) w.r.t. the database package implementing it. This is
+    normally achieved by using ``pkg_resources.resource_filename()``.
     '''
-    return
+    return []
 
 
   @abc.abstractmethod
