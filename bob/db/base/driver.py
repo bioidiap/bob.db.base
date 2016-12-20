@@ -187,6 +187,8 @@ def download(arguments):
 def download_command(subparsers):
   """Adds a new 'download' subcommand to your parser"""
 
+  from argparse import SUPPRESS
+
   if 'DOCSERVER' in os.environ:
     USE_SERVER=os.environ['DOCSERVER']
   else:
@@ -196,7 +198,7 @@ def download_command(subparsers):
   parser.add_argument("--source",
       default="%s/software/bob/databases/latest/" % USE_SERVER)
   parser.add_argument("--force", action='store_true', help = "Overwrite existing database files?")
-  parser.add_argument("--test-dir", help=argparse.SUPPRESS)
+  parser.add_argument("--test-dir", help=SUPPRESS)
   parser.set_defaults(func=download)
 
   return parser
