@@ -61,22 +61,47 @@ def dbshell_command(subparsers):
 
 
 def upload(arguments):
-  """For SQLite databases: uploads the db.sql3 database file to a server."""
-  # get the file name of the target db
-  assert len(arguments.files) == 1
-  assert os.path.basename(arguments.files[0]) == 'db.sql3'
-  source_file = arguments.files[0]
-  target_file = os.path.join(arguments.destination, arguments.name + ".tar.bz2")
+  """Uploads generated metadata to the Idiap build server"""
 
-  if os.path.exists(source_file):
-    print ("Compressing file '%s' to '%s'" %(source_file, target_file))
-    import tarfile, stat
-    f = tarfile.open(target_file, 'w:bz2')
-    f.add(source_file, os.path.basename(source_file))
-    f.close()
-    os.chmod(target_file, stat.S_IRUSR|stat.S_IWUSR | stat.S_IRGRP|stat.S_IWGRP | stat.S_IROTH)
-  else:
-    print ("WARNING! Database file '%s' is not available. Did you run 'bob_dbmanage %s create' ?" % (source_file, arguments.name))
+  import pkg_resources
+  basedir = pkg_resources.resource_filename('bob.db.%s' % arguments.name, '')
+  assert basedir, "Database and package names do not match. Your declared " \
+      "database name should be <name>, if your package is called bob.db.<name>"
+
+  target_file = os.path.join(arguments.destination,
+      arguments.name + ".tar.bz2")
+
+  # check all files exist
+  for p in arguments.files:
+    if not os.path.exists(p):
+      raise IOError("Metadata file `%s' is not available. Did you run " \
+          "`create' before attempting to upload?" % (p,))
+
+  # if destination exists, try to erase it before
+  if os.path.exists(target_file):
+    try:
+      os.unlink(target_file)
+    except Exception as e:
+      print("Cannot erase existing file `%s': %s" % (target_file, e))
+
+  # if you get here, all files are there, ready to package
+  print("Compressing metadata files to `%s'" % (target_file,))
+
+  # compress
+  import tarfile
+
+  f = tarfile.open(target_file, 'w:bz2')
+  for k,p in enumerate(arguments.files):
+    n = os.path.relpath(p, basedir)
+    print("+ [%d/%d] %s" % (k+1, len(arguments.files), n))
+    f.add(p, n)
+  f.close()
+
+  # set permissions for sane Idiap storage
+  import stat
+  perms = stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IROTH
+  os.chmod(target_file, perms)
+
 
 def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
@@ -89,40 +114,80 @@ def upload_command(subparsers):
 
 
 def download(arguments):
-  """For SQLite databases: Downloads the db.sql3 database file from a server."""
-  # get the file name of the target db
-  assert len(arguments.files) == 1
-  assert os.path.basename(arguments.files[0]) == 'db.sql3'
-  target_file = arguments.files[0]
-  if os.path.exists(target_file) and not arguments.force:
-    print ("Skipping download of file '%s' since it exists already." % target_file)
-  else:
-    # get URL of database file
-    source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
-    # download
-    import sys, tempfile, tarfile
-    if sys.version_info[0] <= 2:
-      import urllib2 as urllib
-    else:
-      import urllib.request as urllib
+  """Downloads and uncompresses meta data generated files from Idiap
 
+  Parameters:
+
+    arguments (argparse.Namespace): A set of arguments passed by the
+      command-line parser
+
+
+  Returns:
+
+    int: A POSIX compliant return value of ``0`` if the download is successful,
+    or ``1`` in case it is not.
+
+  """
+
+  # check all files don't exist
+  for p in arguments.files:
+    if os.path.exists(p):
+      if arguments.force:
+        os.unlink(p)
+      else:
+        raise IOError("Metadata file `%s' is already available. Please " \
+            "remove self-generated files before attempting download or " \
+            "--force" % (p,))
+
+  # if you get here, all files aren't there, unpack
+  source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
+
+  target_dir = arguments.test_dir #test case
+
+  if not target_dir: #tries to dig it up
+
+    import pkg_resources
     try:
-      print ("Extracting url '%s' to '%s'" %(source_url, target_file))
-      u = urllib.urlopen(source_url)
-      f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
-      open(f.name, 'wb').write(u.read())
-      t = tarfile.open(fileobj=f, mode = 'r:bz2')
-      t.extract(os.path.basename(target_file), os.path.dirname(target_file))
-      t.close()
-      f.close()
-      return False
-    except Exception as e:
-      print ("Error while downloading: '%s'" % e)
-      return True
+      target_dir = pkg_resources.resource_filename('bob.db.%s' % \
+          arguments.name, '')
+    except ImportError as e:
+      print("The package `bob.db.%s' is not currently installed" % \
+          (arguments.name,))
+      print("N.B.: The database and package names **must** match. Your " \
+          "package should be named `bob.db.%s', if the driver name for your "
+          "database is `<name>'")
+      return 1
+
+  # download file from Idiap server, unpack and remove it
+  import sys
+  import tempfile
+  import tarfile
+  import pkg_resources
+  if sys.version_info[0] <= 2:
+    import urllib2 as urllib
+  else:
+    import urllib.request as urllib
+
+  try:
+    print ("Extracting url `%s' into `%s'" %(source_url, target_dir))
+    u = urllib.urlopen(source_url)
+    f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
+    open(f.name, 'wb').write(u.read())
+    t = tarfile.open(fileobj=f, mode='r:bz2')
+    t.extractall(target_dir)
+    t.close()
+    f.close()
+    return 0
+
+  except Exception as e:
+    print ("Error while downloading: %s" % e)
+    return 1
 
 
 def download_command(subparsers):
   """Adds a new 'download' subcommand to your parser"""
+
+  from argparse import SUPPRESS
 
   if 'DOCSERVER' in os.environ:
     USE_SERVER=os.environ['DOCSERVER']
@@ -133,6 +198,7 @@ def download_command(subparsers):
   parser.add_argument("--source",
       default="%s/software/bob/databases/latest/" % USE_SERVER)
   parser.add_argument("--force", action='store_true', help = "Overwrite existing database files?")
+  parser.add_argument("--test-dir", help=SUPPRESS)
   parser.set_defaults(func=download)
 
   return parser
@@ -174,58 +240,86 @@ def version_command(subparsers):
 
 @six.add_metaclass(abc.ABCMeta)
 class Interface(object):
-  """Base manager for Bob databases"""
+  """Base manager for Bob databases
+
+  You should derive and implement an Interface object on every ``bob.db``
+  package you create.
+  """
 
 
   @abc.abstractmethod
   def name(self):
-    '''Returns a simple name for this database, w/o funny characters, spaces'''
+    '''The name of this database
+
+    Returns:
+
+      str: a Python-conforming name for this database. This **must** match the
+      package name. If the package is named ``bob.db.foo``, then this function
+      must return ``foo``.
+    '''
+
     return
 
 
   @abc.abstractmethod
   def files(self):
-    '''Returns a python iterable with all auxiliary files needed.
+    '''Files containing meta-data for this package
 
-    The values should be take w.r.t. where the python file that declares the
-    database is sitting at.
+    Returns:
+
+      list: A python iterable with all metadata files needed. The paths listed
+      by this method should correspond to full paths (not relative ones) w.r.t.
+      the database package implementing it. This is normally achieved by using
+      ``pkg_resources.resource_filename()``.
+
     '''
+
     return
 
 
   @abc.abstractmethod
   def version(self):
-    '''Returns the current version number defined in setup.py'''
+    '''The version of this package
+
+    Returns:
+
+      str: The current version number defined in ``setup.py``
+    '''
+
     return
 
 
   @abc.abstractmethod
   def type(self):
-    '''Returns the type of auxiliary files you have for this database
+    '''The type of auxiliary files you have for this database
 
-    If you return 'sqlite', then we append special actions such as 'dbshell'
-    on 'bob_dbmanage.py' automatically for you. Otherwise, we don't.
+    Returns:
 
-    If you use auxiliary text files, just return 'text'. We may provide
-    special services for those types in the future.
+      str: A string defining the type of database implemented. You can return
+      only two values on this function, either ``sqlite`` or ``text``. If you
+      return ``sqlite``, then we append special actions such as ``dbshell`` on
+      ``bob_dbmanage`` automatically for you. Otherwise, we don't.
 
-    Use the special name 'builtin' if this database is an integral part of Bob.
     '''
+
     return
 
 
   def setup_parser(self, parser, short_description, long_description):
     '''Sets up the base parser for this database.
 
-    Keyword arguments:
+    Parameters:
 
-    short_description
-      A short description (one-liner) for this database
+      short_description (str): A short description (one-liner) for this
+        database
 
-    long_description
-      A more involved explanation of this database
+      long_description (str): A more involved explanation of this database
 
-    Returns a subparser, ready to be added commands on
+
+    Returns:
+
+      argparse.ArgumentParser: a subparser, ready so you can add commands on
+
     '''
 
     from argparse import RawDescriptionHelpFormatter
@@ -248,10 +342,12 @@ class Interface(object):
     # adds some stock commands
     version_command(subparsers)
 
-    if type in ('sqlite',):
-      dbshell_command(subparsers)
+    if files:
       upload_command(subparsers)
       download_command(subparsers)
+
+    if type in ('sqlite',):
+      dbshell_command(subparsers)
 
     if files is not None:
       files_command(subparsers)
@@ -261,7 +357,7 @@ class Interface(object):
 
   @abc.abstractmethod
   def add_commands(self, parser):
-    '''Adds commands to a given (:py:mod:`argparse`) parser.
+    '''Adds commands to a given :py:class:`argparse.ArgumentParser`
 
     This method, effectively, allows you to define special commands that your
     database will be able to perform when called from the common driver like
@@ -269,16 +365,20 @@ class Interface(object):
 
     You are not obliged to overwrite this method. If you do, you will have the
     chance to establish your own commands. You don't have to worry about stock
-    commands such as :py:meth:`files` or :py:meth:`version`. They will be automatically
-    hooked-in depending on the values you return for :py:meth:`type` and
-    :py:meth:`files`.
+    commands such as :py:meth:`files` or :py:meth:`version`. They will be
+    automatically hooked-in depending on the values you return for
+    :py:meth:`type` and :py:meth:`files`.
 
-    Keyword arguments
 
-    parser
-      An instance of a :py:class:`argparse.ArgumentParser` that you can customize, i.e., call
-      :py:meth:`argparse.ArgumentParser.add_argument` on.
+    Parameters:
+
+      parser (argparse.ArgumentParser): An instance of a parser that you can
+        customize, i.e., call :py:meth:`argparse.ArgumentParser.add_argument`
+        on.
+
     '''
+
     return
+
 
 __all__ = ('Interface',)
