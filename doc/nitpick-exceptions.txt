@@ -1,3 +1,5 @@
 # Not available in Python 2.7, but ok in Python 3.x
 py:exc ValueError
 py:exc NotImplementedError
+py:exc IOError
+py.exc urllib2.HTTPError

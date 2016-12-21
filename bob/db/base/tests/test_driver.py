@@ -1,29 +1,153 @@
-import tempfile
-import shutil
 import os
+import shutil
+import tempfile
+import urllib2
+
+import nose.tools
 
 from ..driver import download
+
 
 if 'DOCSERVER' in os.environ:
   USE_SERVER=os.environ['DOCSERVER']
 else:
   USE_SERVER='https://www.idiap.ch'
 
+
 class Namespace(object):
   def __init__(self, **kwargs):
     self.__dict__.update(kwargs)
 
 
-def test_download_01():
+def test_download_banca():
   tmpdir = tempfile.mkdtemp()
   try:
-    arguments = Namespace(files=[tmpdir+'/db.sql3'], force=False,
-        name='does_not_exist', test_dir=tmpdir, version='0.9.0',
-        source='%s/software/bob/databases/latest/' % USE_SERVER)
-    assert download(arguments) == 1 #error #error #error #error
-    arguments = Namespace(files=[tmpdir+'/db.sql3'], force=False,
-        name='banca', test_dir=tmpdir, version='0.9.0',
-        source='%s/software/bob/databases/latest/' % USE_SERVER)
-    assert download(arguments) == 0 #success
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+  finally:
+    shutil.rmtree(tmpdir)
+
+
+@nose.tools.raises(urllib2.HTTPError)
+def test_download_unexisting():
+  tmpdir = tempfile.mkdtemp()
+  try:
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='does_not_exist',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+  finally:
+    shutil.rmtree(tmpdir)
+
+
+def test_download_not_missing():
+  tmpdir = tempfile.mkdtemp()
+  try:
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=True,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+  finally:
+    shutil.rmtree(tmpdir)
+
+
+def test_download_missing():
+  tmpdir = tempfile.mkdtemp()
+  try:
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=True,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+  finally:
+    shutil.rmtree(tmpdir)
+
+
+def test_download_force():
+  tmpdir = tempfile.mkdtemp()
+  try:
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=True,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+  finally:
+    shutil.rmtree(tmpdir)
+
+
+@nose.tools.raises(IOError)
+def test_download_existing():
+  tmpdir = tempfile.mkdtemp()
+  try:
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
+    arguments = Namespace(
+        files=[tmpdir+'/db.sql3'],
+        force=False,
+        missing=False,
+        name='banca',
+        test_dir=tmpdir,
+        version='0.9.0',
+        source='%s/software/bob/databases/latest/' % USE_SERVER,
+        )
+    download(arguments)
   finally:
     shutil.rmtree(tmpdir)

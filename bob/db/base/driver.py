@@ -127,61 +127,90 @@ def download(arguments):
     int: A POSIX compliant return value of ``0`` if the download is successful,
     or ``1`` in case it is not.
 
+
+  Raises:
+
+    IOError: if metafiles exist and ``--force`` was not passed
+
+    urllib2.HTTPError: if the target resource does not exist on the webserver
+
   """
 
-  # check all files don't exist
+  # What should happen as a combination of flags. Legend:
+  #
+  # 0 - Exit, with status 0
+  # X - Download, overwrite if there
+  # R - Raise exception, err
+  #
+  # +----------+-----------+----------+--------+
+  # | complete | --missing | --force  |  none  |
+  # +----------+-----------+----------+--------+
+  # |   yes    |     0     |    X     |   R    |
+  # +----------+-----------+----------+--------+
+  # |   no     |     X     |    X     |   X    |
+  # +----------+-----------+----------+--------+
+
+  if not arguments.files:
+    print("Skipping download of metadata files for bob.db.%s: no files "
+        "declared" % arguments.name)
+
+  # Check we're complete in terms of metafiles
+  complete = True
   for p in arguments.files:
-    if os.path.exists(p):
-      if arguments.force:
-        os.unlink(p)
-      else:
-        raise IOError("Metadata file `%s' is already available. Please " \
-            "remove self-generated files before attempting download or " \
-            "--force" % (p,))
+    if not os.path.exists(p):
+      complete = False
+      break
+
+  if complete:
+    if arguments.missing:
+      print("Skipping download of metadata files for `bob.db.%s': complete" % \
+          arguments.name)
+      return 0
+    elif arguments.force:
+      print("Re-downloading metafiles for `bob.db.%s'" % arguments.name)
+    else:
+      raise IOError("Metadata files are already available. Remove metadata " \
+          "files before attempting download or --force")
 
   # if you get here, all files aren't there, unpack
   source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
 
   target_dir = arguments.test_dir #test case
 
-  if not target_dir: #tries to dig it up
+  if not target_dir: #puts files on the root of the installed package
 
     import pkg_resources
     try:
       target_dir = pkg_resources.resource_filename('bob.db.%s' % \
           arguments.name, '')
     except ImportError as e:
-      print("The package `bob.db.%s' is not currently installed" % \
-          (arguments.name,))
-      print("N.B.: The database and package names **must** match. Your " \
-          "package should be named `bob.db.%s', if the driver name for your "
-          "database is `<name>'")
-      return 1
+      raise ImportError("The package `bob.db.%s' is not currently " \
+          "installed. N.B.: The database and package names **must** " \
+          "match. Your package should be named `bob.db.%s', if the driver " \
+          "name for your database is `%s'. Check." % (3*(arguments.name,)))
 
   # download file from Idiap server, unpack and remove it
   import sys
   import tempfile
   import tarfile
   import pkg_resources
+  from .utils import safe_tarmembers
   if sys.version_info[0] <= 2:
     import urllib2 as urllib
   else:
     import urllib.request as urllib
 
-  try:
-    print ("Extracting url `%s' into `%s'" %(source_url, target_dir))
-    u = urllib.urlopen(source_url)
-    f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
-    open(f.name, 'wb').write(u.read())
-    t = tarfile.open(fileobj=f, mode='r:bz2')
-    t.extractall(target_dir)
-    t.close()
-    f.close()
-    return 0
-
-  except Exception as e:
-    print ("Error while downloading: %s" % e)
-    return 1
+  print ("Extracting url `%s' into `%s'" %(source_url, target_dir))
+  u = urllib.urlopen(source_url)
+  f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
+  open(f.name, 'wb').write(u.read())
+  t = tarfile.open(fileobj=f, mode='r:bz2')
+  members = safe_tarmembers(t)
+  for m in members:
+    print("x %s" % m.name)
+    t.extract(m, target_dir)
+  t.close()
+  f.close()
 
 
 def download_command(subparsers):
@@ -197,7 +226,9 @@ def download_command(subparsers):
   parser = subparsers.add_parser('download', help=download.__doc__)
   parser.add_argument("--source",
       default="%s/software/bob/databases/latest/" % USE_SERVER)
-  parser.add_argument("--force", action='store_true', help = "Overwrite existing database files?")
+  group = parser.add_mutually_exclusive_group(required=False)
+  group.add_argument("--force", action='store_true', default=False, help = "Overwrite existing database files?")
+  group.add_argument("--missing", action='store_true', default=False, help = "Only downloads if files are missing")
   parser.add_argument("--test-dir", help=SUPPRESS)
   parser.set_defaults(func=download)
 

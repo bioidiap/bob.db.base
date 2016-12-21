@@ -7,6 +7,7 @@
 """
 
 import os
+import tarfile
 
 
 class null(object):
@@ -209,3 +210,61 @@ def connection_string(dbtype, dbfile, opts={}):
   from sqlalchemy.engine.url import URL
   return URL(dbtype, database=dbfile)
 
+
+resolved = lambda x: os.path.realpath(os.path.abspath(x))
+
+
+def safe_tarmembers(archive):
+  """Gets a list of safe members to extract from a tar archive
+
+  This list excludes:
+
+    * Full paths outside the destination sandbox
+    * Symbolic or hard links to outside the destination sandbox
+
+  Code came from a StackOverflow answer:
+  http://stackoverflow.com/questions/10060069/safely-extract-zip-or-tar-using-python
+
+  Deploy it like this:
+
+  .. code-block:: python
+
+     ar = tarfile.open("foo.tar")
+     ar.extractall(path="./sandbox", members=safe_tarmembers(ar))
+     ar.close()
+
+
+  Parameters:
+
+    archive (tarfile.TarFile): An opened tar file for reading
+
+
+  Returns:
+
+    list: A list of :py:class:`tarfile.TarInfo` objects that satisfy the
+    security criteria imposed by this function, as denoted above.
+
+  """
+
+  def _badpath(path, base):
+    # os.path.join will ignore base if path is absolute
+    return not resolved(os.path.join(base,path)).startswith(base)
+
+  def _badlink(info, base):
+    # Links are interpreted relative to the directory containing the link
+    tip = resolved(os.path.join(base, os.path.dirname(info.name)))
+    return badpath(info.linkname, base=tip)
+
+  base = resolved(".")
+
+  for finfo in archive:
+    if _badpath(finfo.name, base):
+      print("not extracting `%s': illegal path" % (finfo.name,))
+    elif finfo.islnk() and _badlink(finfo, base):
+      print("not extracting `%s': hard link to `%s'" % \
+          (finfo.name, finfo.linkname))
+    elif finfo.issym() and _badlink(finfo, base):
+      print("not extracting `%s': symlink to `%s'" % \
+          (finfo.name, finfo.linkname))
+    else:
+      yield finfo
