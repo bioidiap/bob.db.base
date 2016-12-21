@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
+
 import os
+import sys
 import shutil
 import tempfile
 
