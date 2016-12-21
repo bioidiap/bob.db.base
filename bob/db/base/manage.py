@@ -59,7 +59,7 @@ def create_all(args):
     parsed.verbose = args.verbose
 
     if args.verbose >= 1:
-      print('>>> Creating metadata files for `bob.db.%s'...' % name)
+      print(">>> Creating metadata files for `bob.db.%s'..." % name)
 
     try:
       parsed.func(parsed)
