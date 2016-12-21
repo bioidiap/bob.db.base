@@ -19,7 +19,7 @@ def files_all(args):
 
 
 def upload_all(args):
-  """Executes all the 'upload' commands from SQLite databases"""
+  """Executes all the 'upload' commands from databases"""
 
   for name in [k.name() for k in args.modules if k.files()]:
     parsed = args.parser.parse_args([name, 'upload'])
@@ -28,7 +28,7 @@ def upload_all(args):
 
 
 def download_all(args):
-  """Executes all the 'download' commands from SQLite databases"""
+  """Executes all the 'download' commands from databases"""
 
   for name in [k.name() for k in args.modules if k.files()]:
     parsed = args.parser.parse_args([name, 'download'])
@@ -47,7 +47,7 @@ def create_all(args):
   create_dbs = [k.name() for k in args.modules if k.files()]
 
   if args.verbose >= 1:
-    print('### Running %d database creation commands...' % len(create_dbs))
+    print('### Running %d metadata file creation commands...' % len(create_dbs))
 
   for name in create_dbs:
 
@@ -59,7 +59,7 @@ def create_all(args):
     parsed.verbose = args.verbose
 
     if args.verbose >= 1:
-      print('>>> Creating "%s" SQLite database...' % name)
+      print(">>> Creating metadata files for `bob.db.%s'..." % name)
 
     try:
       parsed.func(parsed)
@@ -70,7 +70,8 @@ def create_all(args):
 
       if args.keep_going:
         if args.verbose >= 1:
-          print('Warning: Error while creating "%s" SQLite database' % name)
+          print("Warning: Error while creating metadata files for " \
+              "`bob.db.%s'" % (name,))
         __import__('traceback').print_exc()
         if args.verbose >= 1:
           print('*** Keep going on user request...')
@@ -81,12 +82,13 @@ def create_all(args):
     finally:
 
       if args.verbose >= 1:
-        print('<<< Finished creation of "%s" SQLite database (%.2f seconds).' \
-            % (name, time.time()-start_time))
+        print("<<< Finished creation of metadata files for `bob.db.%s' " \
+            "(%.2f seconds)." % (name, time.time()-start_time))
 
   if args.verbose >= 1:
-    print('### %d SQLite databases created in %.2f seconds, %d errors' % \
-        (databases, time.time()-total_start, errors))
+    print("### Metadata files for %d packages created in %.2f seconds, " \
+        "%d errors" % (databases, time.time()-total_start, errors))
+
 
 def version_all(args):
   """Executes all the default version commands from individual databases"""
@@ -94,6 +96,7 @@ def version_all(args):
   for name in [k.name() for k in args.modules]:
     parsed = args.parser.parse_args([name, 'version'])
     parsed.func(parsed)
+
 
 def add_all_commands(parser, top_subparser, modules):
   """Adds a subset of commands all databases must comply to and that can be
@@ -142,7 +145,7 @@ def add_all_commands(parser, top_subparser, modules):
       action='store_true', default=False,
       help="If set, I'll first erase the current database")
   create_parser.add_argument('-v', '--verbose', action='count', default=0,
-      help="Do SQL operations in a verbose way")
+      help="Be verbose (may appear multiple times)")
   create_parser.set_defaults(func=create_all)
   create_parser.set_defaults(parser=parser)
   create_parser.set_defaults(modules=modules)
@@ -151,6 +154,7 @@ def add_all_commands(parser, top_subparser, modules):
   version_parser.set_defaults(func=version_all)
   version_parser.set_defaults(parser=parser)
   version_parser.set_defaults(modules=modules)
+
 
 def create_parser(**kwargs):
   """Creates a parser for the central manager taking into consideration the
