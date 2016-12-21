@@ -263,7 +263,11 @@ class Interface(object):
 
   @abc.abstractmethod
   def files(self):
-    '''Files containing meta-data for this package
+    '''List of meta-data files for the package to be downloaded/uploaded
+
+    This function should normally return an empty list, except in case the
+    database being implemented requires download/upload of metadata files that
+    are **not** kept in its (git) repository.
 
     Returns:
 
