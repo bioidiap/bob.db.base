@@ -22,5 +22,8 @@ def main(user_input=None):
   from argparse import RawDescriptionHelpFormatter
   parser = create_parser(description=__doc__, epilog=epilog,
       formatter_class=RawDescriptionHelpFormatter)
-  args = parser.parse_args(args=user_input)
-  return args.func(args)
+  if not user_input:
+    args = parser.parse_args(args=['--help'])
+  else:
+    args = parser.parse_args(args=user_input)
+    return args.func(args)
