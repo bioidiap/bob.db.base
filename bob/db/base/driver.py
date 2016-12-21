@@ -205,9 +205,9 @@ def download(arguments):
   f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
   open(f.name, 'wb').write(u.read())
   t = tarfile.open(fileobj=f, mode='r:bz2')
-  members = safe_tarmembers(t)
-  for m in members:
-    print("x %s" % m.name)
+  members = list(safe_tarmembers(t))
+  for k,m in enumerate(members):
+    print("x [%d/%d] %s" % (k+1, len(members), m.name,))
     t.extract(m, target_dir)
   t.close()
   f.close()
