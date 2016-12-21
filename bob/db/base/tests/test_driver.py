@@ -1,7 +1,11 @@
 import os
 import shutil
 import tempfile
-import urllib2
+
+if sys.version_info[0] <= 2:
+  import urllib2 as urllib
+else:
+  import urllib.request as urllib
 
 import nose.tools
 
@@ -36,7 +40,7 @@ def test_download_banca():
     shutil.rmtree(tmpdir)
 
 
-@nose.tools.raises(urllib2.HTTPError)
+@nose.tools.raises(urllib.HTTPError)
 def test_download_unexisting():
   tmpdir = tempfile.mkdtemp()
   try:
