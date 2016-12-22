@@ -34,6 +34,7 @@ def download_all(args):
     parsed = args.parser.parse_args([name, 'download'])
     parsed.source = args.source
     parsed.force = args.force
+    parsed.missing = args.missing
     parsed.func(parsed)
 
 
