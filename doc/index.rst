@@ -10,7 +10,7 @@
 .. todolist::
 
 .. todo::
-   Improve the documentation by providing a users guide and a development guide.
+   Improve the documentation by providing a development guide.
 
 |project| provides an API to easily query and interface with well known
 database protocols. A |project| database contains information about the
@@ -32,6 +32,8 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
+   user-guide
+   development-guide
    extend
    py_api
 

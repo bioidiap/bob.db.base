@@ -12,8 +12,9 @@
 .. _pypi: http://pypi.python.org
 .. _scipy: http://www.scipy.org
 .. _setuptools: http://trac.edgewall.org/wiki/setuptools
-.. _sphinx: http://sphinx.pocoo.org
+.. _sphinx: http://sphinx-doc.org/
 .. _sqlite: http://www.sqlite.org/
+.. _satellite packages: https://www.idiap.ch/software/bob/packages
 
 .. Place here references to licenses
 
