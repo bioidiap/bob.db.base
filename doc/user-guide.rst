@@ -176,7 +176,7 @@ Since there is no mandated API, each database's interface can be different.
 Please refer to the database's documentation for more information. Here is an
 example for the :ref:`bob.db.atnt`:
 
-.. doctest::
+.. code-block:: python
 
 	>>> import bob.db.atnt
 	>>> db = bob.db.atnt.Database(original_directory='/path/to/orl_faces', original_extension='.pgm')
@@ -184,15 +184,15 @@ example for the :ref:`bob.db.atnt`:
 Calling ``objects`` with no arguments returns all the samples of the
 database. Use :py:func:`help` to find out more.
 
-.. doctest::
+.. code-block:: python
 
-	>>> help(db.objects)# doctest: +SKIP
+	>>> help(db.objects)
 	>>> db.objects()
 	[<File('9': 's1/9')>, ..., <File('396': 's40/6')>]
 
 Samples returned by the ``objects`` method are instances of :py:class:`bob.db.base.File` which provide several methods:
 
-.. doctest::
+.. code-block:: python
 
 	>>> sample = db.objects()[0]
 	>>> sample
@@ -206,7 +206,7 @@ Samples returned by the ``objects`` method are instances of :py:class:`bob.db.ba
 	>>> sample.make_path(db.original_directory, db.original_extension)
 	'/path/to/orl_faces/s1/9.pgm'
 	>>> image = sample.load(db.original_directory, db.original_extension)# doctest: +SKIP
-	>>> image# doctest: +SKIP
+	>>> image
 	array([[42, 41, 44, ..., 50, 49, 57],
 	       [41, 41, 43, ..., 51, 53, 53],
 	       [54, 40, 43, ..., 49, 52, 53],
