@@ -1,13 +1,175 @@
-==========================
- Using |project| databases
-==========================
+.. vim: set fileencoding=utf-8 :
+.. Andre Anjos <andre.anjos@idiap.ch>
 
-|project| database packages can be used to query databases.
-The query can be done both in Python and through the command-line.
+.. _bob.db.base_userguide:
+
+===========================
+ Using |project| Databases
+===========================
+
+|project| database packages can be used to query databases for samples and
+associated metadata. The queries can be done both in Python or through a
+command-line-based application (see :ref:`bob.db.base_devguide`).
+
+
+.. note::
+
+   We'll use the `AT&T Faces Dataset`_ to examplify database usage and
+   development in this guide. This database is small and its raw files can be
+   downloaded without an end-user license agreement. The equivalent db package
+   interface is implemented in :py:mod:`bob.db.atnt`. If you don't have it
+   installed yet, install this package to try out concepts described in this
+   guide for yourself.
+
+
+The Python API
+--------------
+
+There are no firm project standards for the pythonic API of a |project| db
+package, though we advise package developers to follow guidelines (see
+:ref:`bob.db.base_devguide`) which ensure homogeinity through different
+packages. Typically, interfaces provide a ``Database`` class allowing the user
+to build an object that will be used to access raw data samples (and associated
+metadata) available in the dataset, possibly constrained to a number of
+selector parameters for sub-selecting samples.
+
+The constructor of a database is pretty much database dependent, but it
+generally allows the user to setup installation-dependent parameters such as,
+for example, the location where raw data files may be stored, in case those are
+not shipped with the |project| db package. Examples in this guide try to
+abstract away from such specifities in order to provide a general understanding
+of the framework. When specific information is required about a db package
+interface, we recommend you read the specific documentation for that package.
+
+Here is an example of a |project| db package interface in use:
+
+.. code-block:: python
+   :linenos:
+
+   import bob.db.atnt
+   db = bob.db.atnt.Database()
+   >>> for sample in db.objects():
+   ...     # do something with "sample"
+
+In this example, the user imports the data package (line 1), instantiates the
+database (line 2) and then starts iterating over its objects (line 3). Each
+object returned by the ``objects()`` method represents one sample from the
+database.
+
+
+Samples
+=======
+
+A sample represents one atomic data point from the dataset. For example, this
+may mean:
+
+* An image of a person's face in a face recognition database,
+* An audio track within a file (with multiple audio tracks) in a speech
+  recognition database
+* A row in a large file containing measures of flowers (petal width and length)
+  representing the measurements for an individual flower
+* A phrase in a collection of documents stored in an SQL server
+
+Because sample storage varies from dataset to dataset, it is difficult to
+provide a one-fits-all set of tools to read out samples from any kind of
+support. |project| provides typical readout routines for samples stored in
+files (one-file-per-sample model), while other tools for reading subsets of
+data from files are provided by third-party libraries or within the Python
+standard library.
+
+The sample abstraction returned in lists through the db package's ``objects()``
+method represents an abstraction of this concept and should allow usage of such
+objects **independently** of the storage model used by the raw dataset,
+allowing the user to, as transparently as possible, access information with
+minimal setup.
+
+Currently, among all types of samples implemented through different db packages
+in the |project| eco-system, file-based samples are probably the most used. In
+a file-based storage, typically, one raw sample corresponds to data stored in a
+single file on the file system. Very often, samples are organized in
+subdirectories and share a common root installation directory. For example,
+this would be a typical organization for an image database:
+
+.. code-block:: text
+
+   $ tree /path/to/root/of/database
+   /path/to/root/of/database
+   +- directory1
+      +- sample1-1.png
+      +- sample1-1.txt
+      +- sample1-2.png
+      +- sample1-2.txt
+   +- directory2
+      +- sample2-1.png
+      +- sample2-1.txt
+      +- sample2-2.png
+      +- sample2-2.txt
+
+Each sample in this database has the suffix ``.png`` and corresponds to an
+image. For each image, there is a matching file containing tag annotations (one
+per line) indicating what the image file contains, with the suffix ``.txt``.
+
+If one would be in charge of designing a |project| db package for such an
+organization of samples, it is reasonable to expect that:
+
+1. The ``Database`` class constructor to provide a parameter allowing the user
+   to re-allocate the root of their own database installation
+2. The ``Database`` ``objects()`` method would return samples that allow one to
+   load in memory the content of ``.png`` files and *optionally* access
+   associated metadata transparently. For example, each sample could have a
+   method called ``tags()``, which loaded the content of the text files and
+   returned the text tags in a python list
+
+In this context, samples encompass *abstractions* allowing users to load
+information from raw datasets without writing code to do so. #STOPPED HERE
+
+
+Each sample in the database in turn, provides a number of methods
+to access information about its raw or meta-data, allowing the user to create a
+*continuous processing* pipeline.
+
+Database sample objects often provide a ``load()`` allowing the
+pointed object to be loaded in memory:
+
+.. code-block:: python
+
+   import bob.db.atnt
+   db = bob.db.atnt.Database()
+   all_images = []
+   >>> for sample in db.objects():
+   ...     all_images.append(sample.load())
+
+In the example above, the user loads the object pointed by
+:py:mod:`bob.db.atnt`'s image samples using their ``load()`` method,
+accumulating (in memory) all images available in the dataset. While
+
+The task of the |project| db package implementation is to *bridge*
+the raw file storage with your Python scripts so you can script data traversal
+and loading.
+
+
+
+Usage
+=====
+
+The usage of a db package API normally goes through 3 stages:
+
+1. Construct a ``Database`` object
+2. Use the ``Database.objects()`` method to query for samples
+3. Use the returned list of samples in your application
+
+You
+
+
 
 
 The command-line Interface
 --------------------------
+
+The
+programmatic API of each database should be consulted on their own packages.
+The command-line interfaces are centralized through a common application called
+``bob_dbmanage.py``.
 
 A command-line script is provided to manage the installed databases::
 
@@ -39,10 +201,13 @@ A command-line script is provided to manage the installed databases::
 
 	To use a particular database in |project|, its respective package must be
 	installed. For example, here ``bob.db.iris``, ``bob.db.mnist``,
-	``bob.db.wine``, and ``bob.db.atnt`` packages are installed.
+	``bob.db.wine``, and ``bob.db.atnt`` packages are installed. Packages
+  should be installed following our standard installation instructions.
 
-Each database provides its own custom commands. To see for example what commands
-does the ``atnt`` database provide::
+Typically, database packages provide a standard set of commands allowing basic
+probing of their metadata, though each database *can* provide its own set of
+custom commands. To see for example what commands the ``atnt`` database
+provide, use the following command line::
 
 	$ bob_dbmanage.py atnt --help
 	usage: bob_dbmanage.py atnt [-h]
@@ -53,8 +218,8 @@ does the ``atnt`` database provide::
 Checking the database files for consistency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once the database package is installed, it can be used to check the database for
-missing files.::
+Once the database package is installed, it can be used to check the database
+for missing files.::
 
 	$ bob_dbmanage.py atnt checkfiles --help
 	usage: bob_dbmanage.py atnt checkfiles [-h] -d DIRECTORY [-e EXTENSION]
@@ -79,7 +244,8 @@ scripts for running experiments.::
 
 	optional arguments:
 	  -d DIRECTORY, --directory DIRECTORY
-	                        if given, this path will be prepended to every entry
+	 To simplify maintenance and improve homogeneity between different db
+   packages, we further suggest you follow                        if given, this path will be prepended to every entry
 	                        returned.
 	  -e EXTENSION, --extension EXTENSION
 	                        if given, this extension will be appended to every
