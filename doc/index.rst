@@ -3,27 +3,43 @@
 
 .. _bob.db.base:
 
-============================
- |project| Database Support
-============================
+====================
+ |project| Database
+====================
 
-.. todolist::
+A |project| db package (or *database*) contains a set of interfaces (API) to
+programmatically query and access samples and metadata from raw data (usually)
+stored on disk. Because of the growing number of packages of this nature, we
+decided to centralise common functionality and management routines in this
+package, to avoid constant re-writing of basic functionality. This guide
+explains basic concepts of db packages, common functionality available, how to
+create your own and how to connect db packages to real-world applications.
 
-.. todo::
-   Improve the documentation by providing a development guide.
+A |project| db package is normally named ``bob.db.<name>``, where ``<name>``
+corresponds to the original database name or an acronym. So, for example, for
+the `Iris Flower Dataset`_, the corresponding db package is named
+``bob.db.iris``. You should choose the name of your db package carefully so it
+is relatively easy to figure out its relationship with the original raw data it
+programmatically accesses.
 
-|project| provides an API to easily query and interface with well known
-database protocols. A |project| database contains information about the
-organization of the files, functions to query information such as the data
-which might be used for training a model, but it usually does **not** contain
-the data itself (except for some toy examples). Many of the database packages
-provide functionality through data stored in sqlite_ files, whereas the
-smallest ones can be stored as filelists.
+The raw data of a database is, normally, not shipped with the equivalent
+|project| db package. The reasons for these are two fold:
 
-As databases usually contain thousands of files, and as verification protocols
-often require to store information about pairs of files, the size of such
-databases can become very large. For this reason, we have decided to
-externalize many of them in Satellite Packages.
+1. More often than not, raw data is very voluminous and cannot be stored on the
+   Python Package Index (PyPI), where we post our packages
+2. Occasionally, data is subject to end-user license agreements which must be
+   undertaken between processors and data controllers directly. In this case,
+   we're simply not entitled to distribute said raw data files
+
+In cases where both 1 and 2 above are non-issues, the |project| db package
+*may* include the raw data. This decision is taken by the package developer and
+varies from case to case.
+
+A |project| db package is a normal Bob package and should, without exceptions,
+be developed by following the guidelines for any other package available at
+:ref:`bob.extension`. To simplify maintenance and improve homogeneity between
+different db packages, we further suggest you follow our
+:ref:`bob.db.base_devguide`.
 
 
 Documentation

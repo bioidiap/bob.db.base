@@ -32,8 +32,11 @@ setup(
     entry_points={
       'console_scripts': [
         'bob_dbmanage.py = bob.db.base.script.dbmanage:main',
-      ],
+        ],
 
+      'bob.db': [
+        'samples = bob.db.base.tests.sample.driver:Interface',
+        ],
     },
 
     classifiers = [
