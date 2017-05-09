@@ -194,7 +194,7 @@ using the :py:meth:`bob.db.base.tests.sample.Sample.load` method:
 
    >>> import bob.io.image
    >>> image = f.load()
-   >>> type(image)
+   >>> type(image) #doctest: +ELLIPSIS
    <class 'numpy.ndarray'>
    >>> image.shape
    (3, 128, 128)
