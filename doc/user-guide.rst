@@ -243,9 +243,9 @@ Selectors
 =========
 
 You may iterate over a subset of samples from the sample database using
-parameters to :py:meth:`bob.db.atnt.Database.objects` (check its documentation
-for details). For example, to iterate over all the training images, one can
-write:
+parameters to :py:meth:`bob.db.base.tests.sample.Database.objects` (check its
+documentation for details). For example, to iterate over all the training
+images, one can write:
 
 .. doctest:: interface
 
