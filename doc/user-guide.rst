@@ -166,7 +166,7 @@ location w.r.t. a database root directory:
 .. doctest:: interface
 
    >>> f.path # doctest: +ELLIPSIS
-   'dir1/sample1-1'
+   '...'
 
 
 You may use the method :py:meth:`bob.db.base.tests.sample.Sample.make_path` to
@@ -195,7 +195,7 @@ using the :py:meth:`bob.db.base.tests.sample.Sample.load` method:
    >>> import bob.io.image
    >>> image = f.load()
    >>> type(image) #doctest: +ELLIPSIS
-   <class 'numpy.ndarray'>
+   <... 'numpy.ndarray'>
    >>> image.shape
    (3, 128, 128)
    >>> image.dtype
