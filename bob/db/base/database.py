@@ -10,6 +10,9 @@ from .file import File
 
 class Database(object):
     """Low-level Database API to be used within bob."""
+    def __init__(self, original_directory=None, original_extension=None):
+        self.original_directory = original_directory
+        self.original_extension = original_extension
 
     def check_parameters_for_validity(self, parameters, parameter_description,
                                       valid_parameters, default_parameters=None):
@@ -159,8 +162,10 @@ class Database(object):
         paths : [str]
           The paths extracted for the files, in the same order.
         """
-        assert self.original_directory is not None
-        assert self.original_extension is not None
+        if self.original_directory is None:
+            raise ValueError('self.original_directory was not provided (must not be None)!')
+        if self.original_extension is None:
+            raise ValueError('self.original_extension was not provided (must not be None)!')
         return self.file_names(files, self.original_directory, self.original_extension)
 
     def file_names(self, files, directory, extension):
@@ -251,7 +256,8 @@ class SQLiteDatabase(Database):
 
     """
 
-    def __init__(self, sqlite_file, file_class):
+    def __init__(self, sqlite_file, file_class, original_directory=None, original_extension=None):
+        super(SQLiteDatabase, self).__init__(original_directory, original_extension)
         self.m_sqlite_file = sqlite_file
         if not os.path.exists(sqlite_file):
             self.m_session = None
