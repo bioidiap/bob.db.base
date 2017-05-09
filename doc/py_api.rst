@@ -24,3 +24,15 @@ Driver API
 
 .. automodule:: bob.db.base.driver
 
+
+Sample Database
+---------------
+
+.. automodule:: bob.db.base.tests.sample
+
+
+Sample Database Driver
+======================
+
+.. automodule:: bob.db.base.tests.sample.driver
+
