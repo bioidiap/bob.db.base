@@ -349,7 +349,7 @@ process all images and extract color histograms which we saved on a directory
 called ``histograms``. I'd like now to check if all files have been correctly
 processed. In this case, one can simply do:
 
-.. code-block::sh
+.. code-block:: sh
 
    $ bob_dbmanage.py samples checkfiles --directory='histograms' --extension='.hdf5'
    Cannot find file "histograms/dir1/sample1-2.hdf5"
