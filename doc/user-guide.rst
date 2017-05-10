@@ -86,7 +86,7 @@ color recognition". You get an image and you must tell which color is the
 dominant color on the image.
 
 The authors of this database defined a usage protocol for the images in the
-database so to allow different publications to be compared in fair grounds.
+database so to allow different publications to be compared on fair grounds.
 Images ending with ``-1.png`` should be used for training and/or validation
 while images ending with ``-2.png`` should be used for testing (i.e., may not
 be used for adjusting system hyper-parameters).

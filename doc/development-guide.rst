@@ -169,13 +169,18 @@ simple file-based ones:
 .. code-block:: text
 
    bob.db.<dataset-slug>
-   +-- __init__.py
-   +-- models.py
-   +-- query.py
-   +-- create.py
-   +-- driver.py
-   +-- db.sql3
-   +-- test.py
+   +-- bob
+       +-- __init__.py #namespace init for "bob"
+       +-- db
+           +-- __init__.py #namespace init for "bob.db"
+           +-- <dataset-slug>
+               +-- __init__.py
+               +-- models.py
+               +-- query.py
+               +-- create.py
+               +-- driver.py
+               +-- db.sql3
+               +-- test.py
 
 The file ``models.py`` will contain the definition of the SQL tables for every
 component in the database. One possible table in the SQL database will be that
