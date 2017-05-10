@@ -21,10 +21,10 @@ may mean:
 
 * An image of a person's face in a face recognition database,
 * An audio track within a file (with multiple audio tracks) in a speech
-  recognition database
+  recognition database,
 * A row in a large file containing measurements of flower petals (width and
-  length)
-* A phrase in a collection of documents stored in an SQL server
+  length),
+* A phrase in a collection of documents stored in an SQL server.
 
 Because sample storage varies from dataset to dataset, it is difficult to
 provide a one-fits-all set of tools to read out samples from any kind of
@@ -50,7 +50,7 @@ subdirectories and share a common root installation directory.
 Example Database
 ----------------
 
-We'll use a hypothetical image database to examplify database usage and
+We'll use a hypothetical image database to exemplify database usage and
 development in this guide. This database is small and its raw files are
 included with this package (``tests/sample/data`` directory, on the root
 of the package).
@@ -82,12 +82,12 @@ image. For each image, there is a matching file containing tag annotations
 the dominant color. The tag files have a ``.txt`` suffix.
 
 The hypothetical task this database was primarily designed for is "dominant
-color recognition". You get an image and you must tell which color is the
-dominant color on the image.
+color recognition": You get an image and you must tell which color is the
+dominant color in the image.
 
 The authors of this database defined a usage protocol for the images in the
-database so to allow different publications to be compared in fair grounds.
-Images ending with ``-1.png`` should be used for training and/or validation
+database to allow different publications to be compared fairly.
+Images ending with ``-1.png`` should be used for training and/or validation,
 while images ending with ``-2.png`` should be used for testing (i.e., may not
 be used for adjusting system hyper-parameters).
 
@@ -101,17 +101,17 @@ The Python API
 
 There are no firm project standards for the pythonic API of a |project| db
 package, though we advise package developers to follow guidelines (see
-:ref:`bob.db.base_devguide`) which ensure homogeinity through different
-packages. Typically, interfaces provide a ``Database`` class allowing the user
+:ref:`bob.db.base_devguide`) which ensure homogeneity through different
+packages. Typically, interfaces provide a ``Database`` class, allowing the user
 to build an object that will be used to access raw data samples (and associated
 metadata) available in the dataset, possibly constrained to a number of
 selector parameters for sub-selecting samples.
 
 The constructor of a database is pretty much database dependent, but it
-generally allows the user to setup installation-dependent parameters such as,
+generally allows the user to set up installation-dependent parameters such as,
 for example, the location where raw data files may be stored, in case those are
 not shipped with the |project| db package. Examples in this guide try to
-abstract away from such specifities in order to provide a general understanding
+abstract away from such specificities in order to provide a general understanding
 of the framework. When specific information is required about a db package
 interface, we recommend you read the specific API documentation for that
 package.
@@ -120,7 +120,7 @@ The usage of a db package API normally goes through 3 stages:
 
 1. Construct a ``Database`` object
 2. Use the ``Database.objects()`` method to query for samples
-3. Use the returned list of samples in your application
+3. Use the returned list of samples in your application.
 
 Here is an example of a |project| db package interface in use:
 
@@ -142,7 +142,7 @@ database (line 2) and then starts iterating over its objects (line 3). Each
 object returned by the ``objects()`` method represents one sample from the
 database.
 
-Each sample in the database in turn, provides a number of methods
+Each sample in the database in turn provides a number of methods
 to access information about its raw or meta-data, allowing the user to create a
 *continuous processing* pipeline.
 
@@ -161,7 +161,7 @@ Each "sample" returned by :py:meth:`bob.db.base.tests.sample.Database.objects`
 is actually an object of class :py:class:`bob.db.base.tests.sample.Sample`,
 representing the abstraction of a single (raw) dataset file. File objects in
 this package also contain a ``path`` variable that point to their relative
-location w.r.t. a database root directory:
+location with respect to a database root directory:
 
 .. doctest:: interface
 
@@ -170,7 +170,7 @@ location w.r.t. a database root directory:
 
 
 You may use the method :py:meth:`bob.db.base.tests.sample.Sample.make_path` to
-construct paths which contain both a prefix directory and a suffixed extension.
+construct paths which contain both a prefix directory and a suffix extension.
 For example, to build a full path to an installed image in the raw dataset,
 call this method without any parameters:
 
@@ -219,8 +219,8 @@ processing pipeline re-using the database interface like this:
    # stores "processed" in an HDF5 file file named /path/to/processed/s1/9.hdf5
 
 Line 1 loads the image. Line 2 processes the image and generates a processed
-version of the image (e.g. as a :py:class:`numpy.ndarray`). Line 3 above uses
-this db package interface to save the resulting file *respecting* the original
+version of the image (e.g. as a :py:class:`numpy.ndarray`). Line 3 uses
+this db package interface to save the resulting file, *respecting* the original
 database structure. This is convenient because of two reasons:
 
 1. You can manually inspect the directory containing processed images and
@@ -290,7 +290,7 @@ environment, called ``samples`` (our example database). The entry ``all``
 refers to a *shortcut* allowing the user to interact with all installed
 databases at once.
 
-Each database interface implementation is free to setup any number of commands
+Each database interface implementation is free to set up any number of commands
 that may be required for command-line usage. To access the list of commands
 available for the ``samples`` use the ``--help`` command-line option again:
 
@@ -310,8 +310,8 @@ available for the ``samples`` use the ``--help`` command-line option again:
        checkfiles          Check if the files exist, based on your criteria
 
 
-Each of the commands produce different output and runs different routines. The
-``version`` command for example, prints the version of the database:
+Each of the commands produces a different output and runs different routines. The
+``version`` command, for example, prints the version of the database:
 
 .. code-block:: sh
 
@@ -344,17 +344,17 @@ to the train set using the command-line option ``--group``:
 The command ``checkfiles`` runs a file search to make sure all files for the
 database (or a given ``group``) are available on a base directory. This is
 useful, for example, to check the completeness of a pipeline after it was run.
-Suppose, for instance that we ran through the samples database, a script to
-process all images and extract color histograms which we saved on a directory
-called ``histograms``. I'd like now to check if all files have been correctly
-processed. In this case, one can simply do:
+Suppose, for instance, that we ran through the samples database, a script to
+process all images and extract color histograms which we saved in a directory
+called ``histograms``. Now, we would like to check if all files have been correctly
+processed. In this case, we can simply do:
 
-.. code-block::sh
+.. code-block:: sh
 
    $ bob_dbmanage.py samples checkfiles --directory='histograms' --extension='.hdf5'
    Cannot find file "histograms/dir1/sample1-2.hdf5"
    Cannot find file "histograms/dir2/sample2-1.hdf5"
    2 files (out of 6) were not found at "histograms"
 
-The example output shown above indicates my earlier pipeline possibly missed
+The example output shown above indicates that our earlier pipeline possibly missed
 two files.

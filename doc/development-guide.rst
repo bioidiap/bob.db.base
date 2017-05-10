@@ -8,7 +8,7 @@
 ===================
 
 The best way to create a new database for |project| is by first looking at
-examples of working databases that are similar to the dataset your want to
+examples of working databases that are similar to the dataset you want to
 create an API for.  The name of database interface packages for |project|
 usually start with ``bob.db.``. Take a look at our `available packages`_ list
 to find available |project| db packages.
@@ -50,18 +50,23 @@ Examples of more inappropriate names (avoid these):
 Module Organization
 -------------------
 
-Most people find beneficial to share a common module organization so that it is
+Most people find it beneficial to share a common module organization so that it is
 easy for everyone to maintain different databases. This is our typical
-directory organization you should try to adhere to:
+directory organization, which you should try to adhere to:
 
 .. code-block:: text
 
    bob.db.<dataset-slug>
-   +-- __init__.py
-   +-- models.py
-   +-- query.py
-   +-- driver.py
-   +-- test.py
+   +-- bob
+       +-- __init__.py #namespace init for "bob"
+       +-- db
+           +-- __init__.py #namespace init for "bob.db"
+           +-- <dataset-slug>
+               +-- __init__.py
+               +-- models.py
+               +-- query.py
+               +-- driver.py
+               +-- test.py
 
 
 The file ``models.py`` include all classes and functions that represent the
@@ -76,21 +81,21 @@ command-line program ``bob_dbmanage.py`` to interface with your python API for
 specific tasks.
 
 It is conventional that all elements inside ``models.py`` and ``query.py`` are
-imported into the package's ``__init__.py`` to avoid the user to understand
+imported into the package's ``__init__.py`` to avoid obliging the user to understand
 implementation specificities.
 
 The ``driver.py`` should declare a database with a name matching
-``<dataset-slug>`` and implement at least, the following methods from
+``<dataset-slug>`` and implement at least the following methods from
 :py:class:`bob.db.base.driver.Interface`:
 
-* :py:meth:`bob.db.base.driver.Interface.name`: Insert here the
-  ``<dataset-slug>``. See an example at the source code for
+* :py:meth:`bob.db.base.driver.Interface.name`: Here, insert the
+  ``<dataset-slug>``. See an example in the source code for
   :py:meth:`bob.db.base.tests.sample.driver.Interface.name`
-* :py:meth:`bob.db.base.driver.Interface.version`: Insert here the
+* :py:meth:`bob.db.base.driver.Interface.version`: Here, insert the
   db package version. This is typically done by using ``pkg_resources``. See an
-  example at the source code for
+  example in the source code for
   :py:meth:`bob.db.base.tests.sample.driver.Interface.version`
-* :py:meth:`bob.db.base.driver.Interface.files`: Insert here the metafiles this
+* :py:meth:`bob.db.base.driver.Interface.files`: Here, insert the metafiles this
   package contains (see :ref:`bob.db.base_metafiles`)
 * :py:meth:`bob.db.base.driver.Interface.type`: Returns the type of the backend
   implementation. The return value of this function on your driver
@@ -101,9 +106,9 @@ The ``driver.py`` should declare a database with a name matching
 The file ``test.py`` should contain basic test units for all functionality
 shipped with the database. This should contain, at least:
 
-* Tests for reading out samples
+* Tests for reading out samples,
 * Tests for sub-selection of samples using parameters of the ``objects()``
-  method
+  method.
 
 Documentation should accompany the package and indicate how to use the db
 package Python API and its command-line interface, with examples and
@@ -132,13 +137,13 @@ SQL-Backend for File Databases
 So far, we have exemplified the implementation and organization of a simple db
 package, for which the dataset contained only a few raw image samples and a
 single evaluation protocol. For very complex problems, in which datasets
-contain many hundred raw samples and multiple evaluation protocols, a more
+contain many hundreds of raw samples and multiple evaluation protocols, a more
 complex modelling of the *internals* of the |project| db package may be
 required. In such cases, we recommend prospective developers to consider using
 alternative techniques (as opposed to simple file lists) for *implementing* the
 *internals* of their db packages. In this guide, we introduce how to handle
 database backends using SQLite_ through SQLAlchemy_, for which support is
-built-into this package.
+built into this package.
 
 It is important to note that using a simple or complex *backend* implementation
 for storing and retrieving iterables from the database **must** be completely
@@ -164,19 +169,25 @@ simple file-based ones:
 .. code-block:: text
 
    bob.db.<dataset-slug>
-   +-- __init__.py
-   +-- models.py
-   +-- query.py
-   +-- create.py
-   +-- driver.py
-   +-- db.sql3
-   +-- test.py
+   +-- bob
+       +-- __init__.py #namespace init for "bob"
+       +-- db
+           +-- __init__.py #namespace init for "bob.db"
+           +-- <dataset-slug>
+               +-- __init__.py
+               +-- models.py
+               +-- query.py
+               +-- create.py
+               +-- driver.py
+               +-- db.sql3
+               +-- test.py
+
 
 The file ``models.py`` will contain the definition of the SQL tables for every
 component in the database. One possible table in the SQL database will be that
 of ``Sample``'s. If you're designing a db package for a dataset with a
 one-file-per-sample storage model, ensure your ``Sample`` class also inherits
-from :py:class:`bob.db.base.File` to provide an uniform experience to users
+from :py:class:`bob.db.base.File` to provide a uniform experience to users
 already used to bob.db interfaces. Other tables and relationships are optional
 and should map your problem alongside its contraints to a proper database
 schema.
@@ -184,21 +195,21 @@ schema.
 The file ``query.py`` will contain the definition of the ``Database`` class. We
 recommend you consider, in this case, inheriting from
 :py:class:`bob.db.base.SQLiteDatabase`, which provides a number of utilities to
-handle file-based datasets with a SQLite backend. You'll find examples among
+handle file-based datasets with an SQLite backend. You'll find examples among
 different |project| db packages for this. Typically, elements returned by the
 ``Database`` class ``objects()`` in this case are ORM objects from SQLAlchemy_,
 representing a row in a table of your internal database. However, these objects
 behave *exactly* the same as non-SQL ``Sample`` objects and allow the user to
-transparent load file contents and meta data using simple API calls.
+transparently load file contents and meta data using simple API calls.
 
 The file ``driver.py`` will be very similar to other databases, with a few
 exceptions:
 
 1. The :py:meth:`bob.db.base.driver.Interface.files` implementation will return
-   at least the path to the ``db.sql3`` file which will contain the db package
+   at least the path to the ``db.sql3`` file, which will contain the db package
    backend information. This will allow ``bob_dbmanage.py`` to download this
    file in installations it misses or upload updated versions of it to our
-   central server
+   central server.
 2. SQL-backend db packages normally install a ``create`` command at the driver
    :py:class:`bob.db.base.driver.Interface` allowing developers to create the
    ``db.sql3`` file from scratch. It is important to have a create command so
@@ -225,14 +236,14 @@ Metafiles Not Shipped with the Database
 
 Very often, |project| db packages require the use of support files which should
 exist **inside** the package structure, but are not kept under version control.
-Reasons for this may be these *meta*-files are too large or can be recreated
-programmatically. Such files may be of different nature and each developer
+Reasons for this may be that these *meta*-files are too large or can be recreated
+programmatically. Such files may be of different natures and each developer
 should be able to recognize those easily when the situation occurs. Here is a
-non-exhaustive of possible use cases for such metafiles:
+non-exhaustive list of possible use cases for such metafiles:
 
 * Annotations
-* File lists (for example, defining evaluation protocols or the such)
-* Auxialiary database files (for example, Sqlite database files)
+* File lists (for example, defining evaluation protocols or such)
+* Auxiliary database files (for example, Sqlite database files)
 * Samples (in case you want to ship them with your database)
 
 In order to mitigate issues related to management, this package provides a set
@@ -263,9 +274,9 @@ A typical implementation for SQL-backend db packages is like this:
 Metafiles Shipped with the Python Package
 =========================================
 
-If you'd like that the file ``db.sql3`` is shipped to PyPI when you publish
+If you'd like the file ``db.sql3`` to be shipped to PyPI when you publish
 your package, make sure to include ``db.sql3`` in the package's ``MANIFEST.in``
-file. Otherwise, it is not required you add this file to the package manifest.
+file. Otherwise, you are not required to add this file to the package manifest.
 
 
 Download Missing Files for Large Databases
@@ -305,29 +316,29 @@ Bob database interfaces come in two flavours:
    by their controllers. Examples of this are the Samples database in this
    package or APIs provided in any other db packages. The main objective of a
    low-level database interface is to provide access to **all** information
-   provided with the database, without direct regards on the specific task it
-   was originally conceived to be used for. The reasoning behind this design
-   choice lies on fact that databases very often find second lives in different
+   provided with the database, without direct regards to the specific task it
+   was originally conceived for. The reasoning behind this design
+   choice lies in the fact that databases very often find second lives in different
    tasks than originally intended. By providing access to **all** information
    available from the raw dataset, a developer potentialises such (re-)use
    cases.
 2. **High-level interfaces** allow developers to create programmatic APIs to
    *bind* low-level interfaces to frameworks that perform a *specific*
    function. Because each *low-level* databases should be created to export all
-   available information, in some cases, it is possible to re-use an existing
+   available information, in some cases it is possible to re-use an existing
    db package as input to a different task than it was originally conceived
    for. Here are some examples:
 
    * Re-use a database for emotion recognition to perform remote
      photo-plethysmographic (see ``bob.db.hci_tagging``)
-   * Re-use a face recognition database to training a face detector
+   * Re-use a face recognition database to train a face detector
    * Re-use a speaker recognition database to do speech recognition
 
    High-level database interfaces are, therefore, very task specific and
    normally sit together with frameworks doing high-level experimental
    research. Examples of such frameworks are ``bob.bio.base`` (biometric
    recognition) and ``bob.pad.base`` (presentation attack vulnerability and
-   detection). Checkout their user guides for more information on
+   detection). Check out their user guides for more information on
    specific high-level implementations required by those tasks.
 
 

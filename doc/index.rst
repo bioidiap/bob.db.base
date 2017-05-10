@@ -12,7 +12,7 @@ programmatically query and access samples and metadata from raw data (usually)
 stored on disk. Because of the growing number of packages of this nature, we
 decided to centralise common functionality and management routines in this
 package, to avoid constant re-writing of basic functionality. This guide
-explains basic concepts of db packages, common functionality available, how to
+explains basic concepts of db packages, the common functionality that is available, how to
 create your own and how to connect db packages to real-world applications.
 
 A |project| db package is normally named ``bob.db.<name>``, where ``<name>``
@@ -23,16 +23,16 @@ is relatively easy to figure out its relationship with the original raw data it
 programmatically accesses.
 
 The raw data of a database is, normally, not shipped with the equivalent
-|project| db package. The reasons for these are two fold:
+|project| db package. The reasons for these are twofold:
 
 1. More often than not, raw data is very voluminous and cannot be stored on the
-   Python Package Index (PyPI), where we post our packages
-2. Occasionally, data is subject to end-user license agreements which must be
+   Python Package Index (PyPI), where we post our packages.
+2. Occasionally, data is subject to end-user license agreements, which must be
    undertaken between processors and data controllers directly. In this case,
-   we're simply not entitled to distribute said raw data files
+   we're simply not entitled to distribute these raw data files.
 
-In cases where both 1 and 2 above are non-issues, the |project| db package
-*may* include the raw data. This decision is taken by the package developer and
+In cases where both reasons 1 and 2, above, are non-issues, the |project| db package
+*may* include the raw data. This decision is made by the package developer and
 varies from case to case.
 
 A |project| db package is a normal Bob package and should, without exceptions,
