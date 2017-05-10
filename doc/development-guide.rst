@@ -57,11 +57,16 @@ directory organization you should try to adhere to:
 .. code-block:: text
 
    bob.db.<dataset-slug>
-   +-- __init__.py
-   +-- models.py
-   +-- query.py
-   +-- driver.py
-   +-- test.py
+   +-- bob
+       +-- __init__.py #namespace init for "bob"
+       +-- db
+           +-- __init__.py #namespace init for "bob.db"
+           +-- <dataset-slug>
+               +-- __init__.py
+               +-- models.py
+               +-- query.py
+               +-- driver.py
+               +-- test.py
 
 
 The file ``models.py`` include all classes and functions that represent the
