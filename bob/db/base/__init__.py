@@ -11,7 +11,7 @@ import pkg_resources
 from . import utils, driver
 
 from .file import File
-from .database import Database, SQLiteDatabase
+from .database import Database, SQLiteBaseDatabase, SQLiteDatabase, FileDatabase
 from .annotations import read_annotation_file
 __version__ = pkg_resources.require(__name__)[0].version
 
@@ -40,7 +40,9 @@ def __appropriate__(*args):
 __appropriate__(
     File,
     Database,
+    FileDatabase,
     SQLiteDatabase,
+    SQLiteBaseDatabase,
     read_annotation_file,
     )
 __all__ = [_ for _ in dir() if not _.startswith('_')]

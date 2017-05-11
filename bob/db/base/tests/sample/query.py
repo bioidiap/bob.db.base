@@ -34,8 +34,7 @@ class Database:
         'dir2/sample2-2',
         'dir3/sample3-1',
         'dir3/sample3-2',
-        ]
-
+    ]
 
   def objects(self, group=None):
     '''Provides an iterable over samples given the selector information
@@ -49,27 +48,30 @@ class Database:
     particular group given the design protocol.
 
 
-    Parameters:
-
-      group (str): A string that defines the subset within the database, to
+    Parameters
+    ----------
+    group : str
+        A string that defines the subset within the database, to
         return the iteratable for. It may take the value ``test`` or ``train``.
 
 
-    Returns:
+    Returns
+    -------
+    list
+        A list of :py:class:`.Sample` objects you can use to create
+    processing pipelines.
 
-      list: A list of :py:class:`.Sample` objects you can use to create
-      processing pipelines.
 
-
-    Raises:
-
-      ValueError: in case the supplied ``group`` value is not valid.
+    Raises
+    ------
+    ValueError
+    in case the supplied ``group`` value is not valid.
 
     '''
 
     if group is not None and group not in ('train', 'test'):
-      raise ValueError('parameter "groups" should be one of "train" or "test"'\
-          ' - the value "%s" is not valid' % group)
+      raise ValueError('parameter "groups" should be one of "train" or "test"'
+                       ' - the value "%s" is not valid' % group)
 
     # this is a very simple database, so we make simple code here as well
     # more sophisticated databases may need more intricate design however
@@ -78,7 +80,7 @@ class Database:
     if group is not None:
       if group == 'train':
         retlist = [k for k in retlist if k.endswith('-1')]
-      else: # it is test
+      else:  # it is test
         retlist = [k for k in retlist if k.endswith('-2')]
 
     return [Sample(self.data_dir, k) for k in retlist]
