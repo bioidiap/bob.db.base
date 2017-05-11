@@ -35,12 +35,12 @@ def read_annotation_file(file_name, annotation_type):
   """This function provides default functionality to read annotation files.
 
 
-  Parameters:
-
-    file_name : str
+  Parameters
+  ----------
+  file_name : str
       The full path of the annotation file to read
 
-    annotation_type : str
+  annotation_type : str
       The type of the annotation file that should be read. The following
       annotation_types are supported:
 
@@ -53,10 +53,18 @@ def read_annotation_file(file_name, annotation_type):
           gender, age, ...
 
 
-  Returns:
-
-    dict: A python dictionary with the keypoint name as key and the
+  Returns
+  -------
+  dict
+      A python dictionary with the keypoint name as key and the
       position ``(y,x)`` as value, and maybe some additional annotations.
+
+  Raises
+  ------
+  IOError
+      If the annotation file is not found.
+  ValueError
+      If the annotation type is not known.
 
   """
 

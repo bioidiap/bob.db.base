@@ -19,6 +19,13 @@ class FileDatabase(object):
 
   Not all Databases in Bob need to inherit from this class. Use this class
   only if in your database one sample correlates to one actual file.
+
+  Attributes
+  ----------
+  original_directory : str
+      The directory where the raw files are located.
+  original_extension : str
+      The extension of raw data files, e.g. ``.png``.
   """
 
   def __init__(self, original_directory, original_extension):
@@ -26,19 +33,22 @@ class FileDatabase(object):
     self.original_extension = original_extension
 
   def original_file_names(self, files):
-    """original_file_names(files) -> paths
+    """Returns the full path of the original data of the given File objects.
 
-    Returns the full path of the original data of the given File objects.
+    Parameters
+    ----------
+    files : list of :py:class:`bob.db.base.File`
+        The list of file object to retrieve the original data file names for.
 
-    **Parameters:**
+    Returns
+    -------
+    list of :obj:`str`
+        The paths extracted for the files, in the same order.
 
-    files : [:py:class:`bob.db.base.File`]
-      The list of file object to retrieve the original data file names for.
-
-    **Returns:**
-
-    paths : [str]
-      The paths extracted for the files, in the same order.
+    Raises
+    ------
+    ValueError
+        if original_directory or original_extension is None
     """
     if self.original_directory is None:
       raise ValueError(
@@ -53,13 +63,21 @@ class FileDatabase(object):
     """This function returns the original file name for the given File
     object.
 
-    Keyword parameters:
+    Parameters
+    ----------
+    file
+        :py:class:`File` or a derivative
+        The File objects for which the file name should be retrieved
 
-    file : :py:class:`bob.bio.base.database.BioFile` or a derivative
-      The File objects for which the file name should be retrieved
+    Returns
+    -------
+    str
+        The original file name for the given :py:class:`File` object.
 
-    Return value : str
-      The original file name for the given File object
+    Raises
+    ------
+    ValueError
+        if original_directory or original_extension is None.
     """
     # check if directory is set
     if not self.original_directory or not self.original_extension:
@@ -134,17 +152,25 @@ class SQLiteBaseDatabase(object):
   whole session.
 
 
-  Parameters:
-
-    sqlite_file : str
+  Parameters
+  ----------
+  sqlite_file : str
       The file name (including full path) of the SQLite file to read or
       generate.
 
-    file_class : a class instance
+  file_class : :py:class:`File`
       The ``File`` class, which needs to be derived from
       :py:class:`bob.db.base.File`. This is required to be able to
       :py:meth:`query` the databases later on.
 
+  Attributes
+  ----------
+  m_file_class : :py:class:`File`
+      The `file_class` parameter is kept in this attribute.
+  m_session : object
+      The SQL session object.
+  m_sqlite_file : str
+      The `sqlite_file` parameter is kept in this attribute.
   """
 
   def __init__(self, sqlite_file, file_class):
@@ -197,20 +223,20 @@ class SQLiteBaseDatabase(object):
   def files(self, ids, preserve_order=True):
     """Returns a list of ``File`` objects with the given file ids
 
-    Parameters:
-
-      ids : list, tuple
+    Parameters
+    ----------
+    ids : list or tuple
         The ids of the object in the database table "file". This object
         should be a python iterable (such as a tuple or list).
 
-      preserve_order : bool
+    preserve_order : bool
         If True (the default) the order of elements is preserved, but the
         execution time increases.
 
-
-    Returns:
-
-      list: a list (that may be empty) of ``File`` objects.
+    Returns
+    -------
+    list
+        a list (that may be empty) of ``File`` objects.
 
     """
 
@@ -228,27 +254,24 @@ class SQLiteBaseDatabase(object):
     """Returns a full file paths considering particular file ids
 
 
-    Parameters:
-
-      ids : list, tuple
-        The ids of the object in the database table "file". This object
-        should be a python iterable (such as a tuple or list).
-
-      prefix : str or None
+    Parameters
+    ----------
+    ids : list or tuple
+        The ids of the object in the database table "file". This object should
+        be a python iterable (such as a tuple or list).
+    prefix : :obj:`str`, optional
         The bit of path to be prepended to the filename stem
-
-      suffix : str or None
+    suffix : :obj:`str`, optional
         The extension determines the suffix that will be appended to the
         filename stem.
-
-      preserve_order : bool
+    preserve_order : bool
         If True (the default) the order of elements is preserved, but the
         execution time increases.
 
-
-    Returns:
-
-      list: A list (that may be empty) of the fully constructed paths given
+    Returns
+    -------
+    list
+        A list (that may be empty) of the fully constructed paths given
         the file ids.
 
     """
@@ -260,19 +283,20 @@ class SQLiteBaseDatabase(object):
     """Reverses the lookup from certain paths, returns a list of
     :py:class:`File`'s
 
-    Parameters:
+    Parameters
+    ----------
+    paths : list
+        The filename stems (list of str) to query for. This object should be a
+        python iterable (such as a tuple or list)
 
-      paths : [str]
-        The filename stems to query for. This object should be a python
-        iterable (such as a tuple or list)
-
-      preserve_order : True
+    preserve_order : :obj:`bool`, optional
         If True (the default) the order of elements is preserved, but the
         execution time increases.
 
-    Returns:
-
-      list: A list (that may be empty).
+    Returns
+    -------
+    list
+        A list (that may be empty).
 
     """
 
@@ -291,18 +315,16 @@ class SQLiteBaseDatabase(object):
   def uniquify(self, file_list):
     """Sorts the given list of File objects and removes duplicates from it.
 
-
-    Parameters:
-
-      file_list: [:py:class:`File`]
+    Parameters
+    ----------
+    file_list : [:py:class:`File`]
         A list of File objects to be handled. Also other objects can be
         handled, as long as they are sortable.
 
-    Returns:
-
-      list: A sorted copy of the given ``file_list`` with the duplicates
-        removed.
-
+    Returns
+    -------
+    list
+        A sorted copy of the given ``file_list`` with the duplicates removed.
     """
 
     return sorted(set(file_list))
