@@ -124,7 +124,7 @@ class File(object):
     Returns
     -------
     object
-        The loaded data (normally :py:`numpy.ndarray`).
+        The loaded data (normally :py:class:`numpy.ndarray`).
 
     """
     # get the path

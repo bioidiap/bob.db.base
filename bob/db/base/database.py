@@ -137,13 +137,13 @@ class SQLiteBaseDatabase(object):
   Parameters:
 
     sqlite_file : str
-    The file name (including full path) of the SQLite file to read or
-    generate.
+      The file name (including full path) of the SQLite file to read or
+      generate.
 
     file_class : a class instance
-    The ``File`` class, which needs to be derived from
-    :py:class:`bob.db.base.File`. This is required to be able to
-    :py:meth:`query` the databases later on.
+      The ``File`` class, which needs to be derived from
+      :py:class:`bob.db.base.File`. This is required to be able to
+      :py:meth:`query` the databases later on.
 
   """
 
@@ -200,12 +200,12 @@ class SQLiteBaseDatabase(object):
     Parameters:
 
       ids : list, tuple
-      The ids of the object in the database table "file". This object
-      should be a python iterable (such as a tuple or list).
+        The ids of the object in the database table "file". This object
+        should be a python iterable (such as a tuple or list).
 
       preserve_order : bool
-      If True (the default) the order of elements is preserved, but the
-      execution time increases.
+        If True (the default) the order of elements is preserved, but the
+        execution time increases.
 
 
     Returns:
@@ -231,25 +231,25 @@ class SQLiteBaseDatabase(object):
     Parameters:
 
       ids : list, tuple
-      The ids of the object in the database table "file". This object
-      should be a python iterable (such as a tuple or list).
+        The ids of the object in the database table "file". This object
+        should be a python iterable (such as a tuple or list).
 
       prefix : str or None
-      The bit of path to be prepended to the filename stem
+        The bit of path to be prepended to the filename stem
 
       suffix : str or None
-      The extension determines the suffix that will be appended to the
-      filename stem.
+        The extension determines the suffix that will be appended to the
+        filename stem.
 
       preserve_order : bool
-      If True (the default) the order of elements is preserved, but the
-      execution time increases.
+        If True (the default) the order of elements is preserved, but the
+        execution time increases.
 
 
     Returns:
 
       list: A list (that may be empty) of the fully constructed paths given
-      the file ids.
+        the file ids.
 
     """
 
@@ -263,12 +263,12 @@ class SQLiteBaseDatabase(object):
     Parameters:
 
       paths : [str]
-      The filename stems to query for. This object should be a python
-      iterable (such as a tuple or list)
+        The filename stems to query for. This object should be a python
+        iterable (such as a tuple or list)
 
       preserve_order : True
-      If True (the default) the order of elements is preserved, but the
-      execution time increases.
+        If True (the default) the order of elements is preserved, but the
+        execution time increases.
 
     Returns:
 
