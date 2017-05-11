@@ -31,7 +31,8 @@ def create_database():
     if os.path.exists(dbfile):
         os.remove(dbfile)
     import bob.db.base.utils
-    engine = bob.db.base.utils.create_engine_try_nolock('sqlite', dbfile, echo=True)
+    engine = bob.db.base.utils.create_engine_try_nolock(
+        'sqlite', dbfile, echo=True)
     Base.metadata.create_all(engine)
     session = bob.db.base.utils.session('sqlite', dbfile, echo=True)
     session.add(TestFile())
@@ -42,8 +43,9 @@ def create_database():
 
 
 class TestDatabase (bob.db.base.SQLiteDatabase):
+
     def __init__(self):
-        bob.db.base.SQLiteDatabase.__init__(self, dbfile, TestFile)
+        super(TestDatabase, self).__init__(dbfile, TestFile, None, None)
 
     def groups(self, protocol=None):
         return ['group']
@@ -51,7 +53,8 @@ class TestDatabase (bob.db.base.SQLiteDatabase):
     def model_ids(self, groups=None, protocol=None):
         return [5]
 
-    def objects(self, groups=None, protocol=None, purposes=None, model_ids=None):
+    def objects(self, groups=None, protocol=None, purposes=None,
+                model_ids=None):
         return list(self.query(TestFile))
 
     def tmodel_ids(self, groups=None, protocol=None):
@@ -74,9 +77,11 @@ def test01_annotations():
     # check the different annotation types
     for annotation_type in ('eyecenter', 'named', 'idiap'):
         # get the annotation file name
-        annotation_file = bob.io.base.test_utils.datafile("%s.pos" % annotation_type, 'bob.db.base')
+        annotation_file = bob.io.base.test_utils.datafile(
+            "%s.pos" % annotation_type, 'bob.db.base')
         # read the annotations
-        annotations = bob.db.base.read_annotation_file(annotation_file, annotation_type)
+        annotations = bob.db.base.read_annotation_file(
+            annotation_file, annotation_type)
         # check
         assert 'leye' in annotations
         assert 'reye' in annotations
@@ -120,7 +125,8 @@ def test02_database():
     assert tmodel_ids[0] == 5
 
     file = db.objects()[0]
-    assert db.paths([1], "another/directory", ".other")[0] == "another/directory/test/path.other"
+    assert db.paths([1], "another/directory",
+                    ".other")[0] == "another/directory/test/path.other"
 
     annots = db.annotations(file)
     assert len(annots) == 1

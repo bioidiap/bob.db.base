@@ -16,12 +16,14 @@ def dbshell(arguments):
   """Drops you into a database shell"""
 
   if len(arguments.files) != 1:
-    raise RuntimeError("Something is wrong this database is supposed to be of type SQLite, but you have more than one data file available: %s" % argument.files)
+    raise RuntimeError(
+        "Something is wrong this database is supposed to be of type SQLite, but you have more than one data file available: %s" % argument.files)
 
   if arguments.type == 'sqlite':
     prog = 'sqlite3'
   else:
-    raise RuntimeError("Error auxiliary database file '%s' cannot be used to initiate a database shell connection (type='%s')" % (dbfile, arguments.type))
+    raise RuntimeError("Error auxiliary database file '%s' cannot be used to initiate a database shell connection (type='%s')" % (
+        dbfile, arguments.type))
 
   cmdline = [prog, arguments.files[0]]
 
@@ -36,13 +38,13 @@ def dbshell(arguments):
   except OSError as e:
     # occurs when the file is not executable or not found
     print("Error executing '%s': %s (%d)" % (' '.join(cmdline), e.strerror,
-        e.errno))
+                                             e.errno))
     import sys
     sys.exit(e.errno)
 
   try:
     p.communicate()
-  except KeyboardInterrupt: # the user CTRL-C'ed
+  except KeyboardInterrupt:  # the user CTRL-C'ed
     import signal
     os.kill(p.pid, signal.SIGTERM)
     return signal.SIGTERM
@@ -55,8 +57,8 @@ def dbshell_command(subparsers):
 
   parser = subparsers.add_parser('dbshell', help=dbshell.__doc__)
   parser.add_argument("-n", "--dry-run", dest="dryrun", default=False,
-      action='store_true',
-      help="does not actually run, just prints what would do instead")
+                      action='store_true',
+                      help="does not actually run, just prints what would do instead")
   parser.set_defaults(func=dbshell)
 
 
@@ -69,13 +71,13 @@ def upload(arguments):
       "database name should be <name>, if your package is called bob.db.<name>"
 
   target_file = os.path.join(arguments.destination,
-      arguments.name + ".tar.bz2")
+                             arguments.name + ".tar.bz2")
 
   # check all files exist
   for p in arguments.files:
     if not os.path.exists(p):
-      raise IOError("Metadata file `%s' is not available. Did you run " \
-          "`create' before attempting to upload?" % (p,))
+      raise IOError("Metadata file `%s' is not available. Did you run "
+                    "`create' before attempting to upload?" % (p,))
 
   # if destination exists, try to erase it before
   if os.path.exists(target_file):
@@ -91,15 +93,15 @@ def upload(arguments):
   import tarfile
 
   f = tarfile.open(target_file, 'w:bz2')
-  for k,p in enumerate(arguments.files):
+  for k, p in enumerate(arguments.files):
     n = os.path.relpath(p, basedir)
-    print("+ [%d/%d] %s" % (k+1, len(arguments.files), n))
+    print("+ [%d/%d] %s" % (k + 1, len(arguments.files), n))
     f.add(p, n)
   f.close()
 
   # set permissions for sane Idiap storage
   import stat
-  perms = stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IWGRP|stat.S_IROTH
+  perms = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
   os.chmod(target_file, perms)
 
 
@@ -107,7 +109,8 @@ def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
 
   parser = subparsers.add_parser('upload', help=upload.__doc__)
-  parser.add_argument("--destination", default="/idiap/group/torch5spro/databases/latest")
+  parser.add_argument(
+      "--destination", default="/idiap/group/torch5spro/databases/latest")
   parser.set_defaults(func=upload)
 
   return parser
@@ -152,7 +155,7 @@ def download(arguments):
 
   if not arguments.files:
     print("Skipping download of metadata files for bob.db.%s: no files "
-        "declared" % arguments.name)
+          "declared" % arguments.name)
 
   # Check we're complete in terms of metafiles
   complete = True
@@ -163,31 +166,31 @@ def download(arguments):
 
   if complete:
     if arguments.missing:
-      print("Skipping download of metadata files for `bob.db.%s': complete" % \
-          arguments.name)
+      print("Skipping download of metadata files for `bob.db.%s': complete" %
+            arguments.name)
       return 0
     elif arguments.force:
       print("Re-downloading metafiles for `bob.db.%s'" % arguments.name)
     else:
-      raise IOError("Metadata files are already available. Remove metadata " \
-          "files before attempting download or --force")
+      raise IOError("Metadata files are already available. Remove metadata "
+                    "files before attempting download or --force")
 
   # if you get here, all files aren't there, unpack
   source_url = os.path.join(arguments.source, arguments.name + ".tar.bz2")
 
-  target_dir = arguments.test_dir #test case
+  target_dir = arguments.test_dir  # test case
 
-  if not target_dir: #puts files on the root of the installed package
+  if not target_dir:  # puts files on the root of the installed package
 
     import pkg_resources
     try:
-      target_dir = pkg_resources.resource_filename('bob.db.%s' % \
-          arguments.name, '')
+      target_dir = pkg_resources.resource_filename('bob.db.%s' %
+                                                   arguments.name, '')
     except ImportError as e:
-      raise ImportError("The package `bob.db.%s' is not currently " \
-          "installed. N.B.: The database and package names **must** " \
-          "match. Your package should be named `bob.db.%s', if the driver " \
-          "name for your database is `%s'. Check." % (3*(arguments.name,)))
+      raise ImportError("The package `bob.db.%s' is not currently "
+                        "installed. N.B.: The database and package names **must** "
+                        "match. Your package should be named `bob.db.%s', if the driver "
+                        "name for your database is `%s'. Check." % (3 * (arguments.name,)))
 
   # download file from Idiap server, unpack and remove it
   import sys
@@ -200,14 +203,14 @@ def download(arguments):
   else:
     import urllib.request as urllib
 
-  print ("Extracting url `%s' into `%s'" %(source_url, target_dir))
+  print ("Extracting url `%s' into `%s'" % (source_url, target_dir))
   u = urllib.urlopen(source_url)
-  f = tempfile.NamedTemporaryFile(suffix = ".tar.bz2")
+  f = tempfile.NamedTemporaryFile(suffix=".tar.bz2")
   open(f.name, 'wb').write(u.read())
   t = tarfile.open(fileobj=f, mode='r:bz2')
   members = list(safe_tarmembers(t))
-  for k,m in enumerate(members):
-    print("x [%d/%d] %s" % (k+1, len(members), m.name,))
+  for k, m in enumerate(members):
+    print("x [%d/%d] %s" % (k + 1, len(members), m.name,))
     t.extract(m, target_dir)
   t.close()
   f.close()
@@ -219,16 +222,18 @@ def download_command(subparsers):
   from argparse import SUPPRESS
 
   if 'DOCSERVER' in os.environ:
-    USE_SERVER=os.environ['DOCSERVER']
+    USE_SERVER = os.environ['DOCSERVER']
   else:
-    USE_SERVER='https://www.idiap.ch'
+    USE_SERVER = 'https://www.idiap.ch'
 
   parser = subparsers.add_parser('download', help=download.__doc__)
   parser.add_argument("--source",
-      default="%s/software/bob/databases/latest/" % USE_SERVER)
+                      default="%s/software/bob/databases/latest/" % USE_SERVER)
   group = parser.add_mutually_exclusive_group(required=False)
-  group.add_argument("--force", action='store_true', default=False, help = "Overwrite existing database files?")
-  group.add_argument("--missing", action='store_true', default=False, help = "Only downloads if files are missing")
+  group.add_argument("--force", action='store_true',
+                     default=False, help="Overwrite existing database files?")
+  group.add_argument("--missing", action='store_true',
+                     default=False, help="Only downloads if files are missing")
   parser.add_argument("--test-dir", help=SUPPRESS)
   parser.set_defaults(func=download)
 
@@ -239,7 +244,8 @@ def print_files(arguments):
   """Prints the current location of raw database files."""
 
   print ("Files for database '%s':" % arguments.name)
-  for k in arguments.files: print(k)
+  for k in arguments.files:
+    print(k)
 
   return 0
 
@@ -277,7 +283,6 @@ class Interface(object):
   package you create.
   """
 
-
   @abc.abstractmethod
   def name(self):
     '''The name of this database
@@ -290,7 +295,6 @@ class Interface(object):
     '''
 
     return
-
 
   @abc.abstractmethod
   def files(self):
@@ -311,7 +315,6 @@ class Interface(object):
 
     return
 
-
   @abc.abstractmethod
   def version(self):
     '''The version of this package
@@ -322,7 +325,6 @@ class Interface(object):
     '''
 
     return
-
 
   @abc.abstractmethod
   def type(self):
@@ -338,7 +340,6 @@ class Interface(object):
     '''
 
     return
-
 
   def setup_parser(self, parser, short_description, long_description):
     '''Sets up the base parser for this database.
@@ -361,8 +362,8 @@ class Interface(object):
 
     # creates a top-level parser for this database
     top_level = parser.add_parser(self.name(),
-        formatter_class=RawDescriptionHelpFormatter,
-        help=short_description, description=long_description)
+                                  formatter_class=RawDescriptionHelpFormatter,
+                                  help=short_description, description=long_description)
 
     type = self.type()
     files = self.files()
@@ -388,7 +389,6 @@ class Interface(object):
       files_command(subparsers)
 
     return subparsers
-
 
   @abc.abstractmethod
   def add_commands(self, parser):
