@@ -373,7 +373,7 @@ def check_parameter_for_validity(parameter, parameter_description,
 
   Parameters
   ----------
-  parameter : str or None
+  parameter : :obj:`str` or :obj:`None`
       The single parameter to be checked. Might be a string or None.
 
   parameter_description : str
