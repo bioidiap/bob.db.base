@@ -256,7 +256,7 @@ class SQLiteBaseDatabase(object):
 
     Parameters
     ----------
-    ids : list or tuple
+    ids : :obj:`list` or :obj`tuple`
         The ids of the object in the database table "file". This object should
         be a python iterable (such as a tuple or list).
     prefix : :obj:`str`, optional
