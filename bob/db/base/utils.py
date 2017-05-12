@@ -45,13 +45,16 @@ def apsw_is_available():
 class SQLiteConnector(object):
   '''An object that handles the connection to SQLite databases.
 
-  Parameters:
+  Parameters
+  ----------
+  filename : str
+      The name of the file containing the SQLite database
 
-    filename (str): The name of the file containing the SQLite database
+  readonly : bool
+      Should I try and open the database in read-only mode?
 
-    readonly (bool): Should I try and open the database in read-only mode?
-
-    lock (str): Any vfs name as output by apsw.vfsnames()
+  lock : str
+      Any vfs name as output by apsw.vfsnames()
 
   '''
 
@@ -210,12 +213,20 @@ def session_try_nolock(dbtype, dbfile, echo=False):
 def connection_string(dbtype, dbfile, opts={}):
   """Returns a connection string for supported platforms
 
-  Parameters:
+  Parameters
+  ----------
+  dbtype : str
+      The type of database (only ``sqlite`` is supported for the time being)
 
-    dbtype (str): The type of database (only ``sqlite`` is supported for the
-      time being)
+  dbfile : str
+      The location of the file to be used
+  opts : :obj:`dict`, optional
+      This is ignored.
 
-    dbfile (str): The location of the file to be used
+  Returns
+  -------
+  object
+      The url.
 
   """
 
@@ -230,34 +241,36 @@ def resolved(x):
 def safe_tarmembers(archive):
   """Gets a list of safe members to extract from a tar archive
 
-  This list excludes:
 
+  This list excludes:
     * Full paths outside the destination sandbox
     * Symbolic or hard links to outside the destination sandbox
 
-  Code came from a StackOverflow answer:
-  http://stackoverflow.com/questions/10060069/safely-extract-zip-or-tar-using-python
+  Notes
+  -----
+    Code came from a StackOverflow answer
+    http://stackoverflow.com/questions/10060069
 
-  Deploy it like this:
+  Example
+  -------
+    Deploy it like this
+    .. code-block:: python
 
-  .. code-block:: python
+       ar = tarfile.open("foo.tar")
+       ar.extractall(path="./sandbox", members=safe_tarmembers(ar))
+       ar.close()
 
-     ar = tarfile.open("foo.tar")
-     ar.extractall(path="./sandbox", members=safe_tarmembers(ar))
-     ar.close()
+  Parameters
+  ----------
+  archive : tarfile.TarFile
+      An opened tar file for reading
 
-
-  Parameters:
-
-    archive (tarfile.TarFile): An opened tar file for reading
-
-
-  Returns:
-
-    list: A list of :py:class:`tarfile.TarInfo` objects that satisfy the
-    security criteria imposed by this function, as denoted above.
-
-  """
+  Yields
+  ------
+  list
+      A list of :py:class:`tarfile.TarInfo` objects that satisfy the security
+      criteria imposed by this function, as denoted above.
+    """
 
   def _badpath(path, base):
     # os.path.join will ignore base if path is absolute
@@ -296,23 +309,32 @@ def check_parameters_for_validity(parameters, parameter_description,
   ValueError.
 
 
-  Parameters:
-
-    parameters : str, [str] or None
+  Parameters
+  ----------
+  parameters : str or list of :obj:`str` or None
       The parameters to be checked. Might be a string, a list/tuple of
       strings, or None.
 
-    parameter_description : str
+  parameter_description : str
       A short description of the parameter. This will be used to raise an
       exception in case the parameter is not valid.
 
-    valid_parameters : [str]
+  valid_parameters : list of :obj:`str`
       A list/tuple of valid values for the parameters.
 
-    default_parameters : [str] or None
+  default_parameters : list of :obj:`str` or None
       The list/tuple of default parameters that will be returned in case
-      parameters is None or empty. If omitted, all valid_parameters are
-      used.
+      parameters is None or empty. If omitted, all valid_parameters are used.
+
+  Returns
+  -------
+  tuple
+      A list or tuple contatining the valid parameters.
+
+  Raises
+  ------
+  ValueError
+      If some of the parameters are not valid.
 
   """
 
@@ -349,23 +371,31 @@ def check_parameter_for_validity(parameter, parameter_description,
   This function will return the parameter after the check tuple or list
   of parameters, or raise a :py:exc:`ValueError`.
 
-
-  Parameters:
-
-    parameter : str
+  Parameters
+  ----------
+  parameter : :obj:`str` or :obj:`None`
       The single parameter to be checked. Might be a string or None.
 
-    parameter_description : str
+  parameter_description : str
       A short description of the parameter. This will be used to raise an
       exception in case the parameter is not valid.
 
-    valid_parameters : [str]
+  valid_parameters : list of :obj:`str`
       A list/tuple of valid values for the parameters.
 
-    default_parameters : [str] or None
-      The default parameter that will be returned in case parameter is
-      None or empty. If omitted and parameter is empty, a ValueError is
-      raised.
+  default_parameter : list of :obj:`str`, optional
+      The default parameter that will be returned in case parameter is None or
+      empty. If omitted and parameter is empty, a ValueError is raised.
+
+  Returns
+  -------
+  str
+      The validated parameter.
+
+  Raises
+  ------
+  ValueError
+      If the specified parameter is invalid.
 
   """
 
@@ -421,7 +451,7 @@ def convert_names_to_highlevel(names, low_level_names,
 
 def convert_names_to_lowlevel(names, low_level_names,
                               high_level_names):
-  """ Same as convert_names_to_highlevel but on reverse """
+  """ Same as :py:meth:`convert_names_to_highlevel` but on reverse """
 
   if names is None:
     return None
@@ -436,21 +466,21 @@ def file_names(files, directory, extension):
 
   Returns the full path of the given File objects.
 
-  **Parameters:**
-
-  files : [:py:class:`bob.db.base.File`]
-    The list of file object to retrieve the file names for.
+  Parameters
+  ----------
+  files : list of :py:class:`bob.db.base.File`
+      The list of file object to retrieve the file names for.
 
   directory : str
-    The base directory, where the files can be found.
+      The base directory, where the files can be found.
 
   extension : str
-    The file name extension to add to all files.
+      The file name extension to add to all files.
 
-  **Returns:**
-
-  paths : [str]
-    The paths extracted for the files, in the same order.
+  Returns
+  -------
+  paths : list of :obj:`str`
+      The paths extracted for the files, in the same order.
   """
   # return the paths of the files, do not remove duplicates
   return [f.make_path(directory, extension) for f in files]
@@ -461,15 +491,15 @@ def sort_files(files):
   that define an 'id' data member). The files will be sorted according to their
   id, and duplicate entries will be removed.
 
-  **Parameters:**
+  Parameters
+  ----------
+  files : list of :py:class:`bob.db.base.File`
+      The list of files to be uniquified and sorted.
 
-  files : [:py:class:`bob.bio.base.database.BioFile`]
-    The list of files to be uniquified and sorted.
-
-  **Returns:**
-
-  sorted : [:py:class:`bob.bio.base.database.BioFile`]
-    The sorted list of files, with duplicate `BioFile.id`\s being removed.
+  Returns
+  -------
+  sorted : list of :py:class:`bob.db.base.File`
+      The sorted list of files, with duplicate `BioFile.id`\s being removed.
   """
   # sort files using their sort function
   sorted_files = sorted(files)

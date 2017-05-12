@@ -58,14 +58,13 @@ class Database:
     Returns
     -------
     list
-        A list of :py:class:`.Sample` objects you can use to create
-    processing pipelines.
-
+        A list of :py:class:`.Sample` objects you can use to create processing
+        pipelines.
 
     Raises
     ------
     ValueError
-    in case the supplied ``group`` value is not valid.
+        in case the supplied ``group`` value is not valid.
 
     '''
 

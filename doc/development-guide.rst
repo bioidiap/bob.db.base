@@ -336,10 +336,10 @@ Bob database interfaces come in two flavours:
 
    High-level database interfaces are, therefore, very task specific and
    normally sit together with frameworks doing high-level experimental
-   research. Examples of such frameworks are ``bob.bio.base`` (biometric
-   recognition) and ``bob.pad.base`` (presentation attack vulnerability and
-   detection). Check out their user guides for more information on
-   specific high-level implementations required by those tasks.
+   research. Examples of such frameworks are :ref:`bob.bio.base <bob.bio.base>`
+   (biometric recognition) and :ref:`bob.pad.base <bob.pad.base>` (presentation
+   attack vulnerability and detection). Checkout their user guides for more
+   information on specific high-level implementations required by those tasks.
 
 
 .. Place your references here:

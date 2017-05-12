@@ -166,7 +166,7 @@ location with respect to a database root directory:
 .. doctest:: interface
 
    >>> f.path # doctest: +ELLIPSIS
-   '...'
+   'dir1/sample1-1'
 
 
 You may use the method :py:meth:`bob.db.base.tests.sample.Sample.make_path` to
@@ -236,7 +236,7 @@ directories:
 
    >>> processed = f.load('/path/to/processed', '.hdf5')
    >>> reprocessed = reprocessor(processed)
-   >>> f.save(processed, '/path/to/reprocessed', '.hdf5')
+   >>> f.save(reprocessed, '/path/to/reprocessed', '.hdf5')
 
 
 Selectors
