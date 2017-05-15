@@ -66,13 +66,13 @@ class FileDatabase(object):
     Parameters
     ----------
     file
-        :py:class:`File` or a derivative
+        :py:class:`bob.db.base.File` or a derivative
         The File objects for which the file name should be retrieved
 
     Returns
     -------
     str
-        The original file name for the given :py:class:`File` object.
+        The original file name for the given :py:class:`bob.db.base.File` object.
 
     Raises
     ------
@@ -141,7 +141,7 @@ class FileDatabase(object):
 
 class Database(FileDatabase):
   """This class is deprecated. New databases should use the
-  :py:class:`FileDatabase` class if required"""
+  :py:class:`bob.db.base.FileDatabase` class if required"""
   pass
 
 
@@ -158,14 +158,14 @@ class SQLiteBaseDatabase(object):
       The file name (including full path) of the SQLite file to read or
       generate.
 
-  file_class : :py:class:`File`
+  file_class : :py:class:`bob.db.base.File`
       The ``File`` class, which needs to be derived from
       :py:class:`bob.db.base.File`. This is required to be able to
       :py:meth:`query` the databases later on.
 
   Attributes
   ----------
-  m_file_class : :py:class:`File`
+  m_file_class : :py:class:`bob.db.base.File`
       The `file_class` parameter is kept in this attribute.
   m_session : object
       The SQL session object.
@@ -281,7 +281,7 @@ class SQLiteBaseDatabase(object):
 
   def reverse(self, paths, preserve_order=True):
     """Reverses the lookup from certain paths, returns a list of
-    :py:class:`File`'s
+    :py:class:`bob.db.base.File`'s
 
     Parameters
     ----------
@@ -317,7 +317,7 @@ class SQLiteBaseDatabase(object):
 
     Parameters
     ----------
-    file_list : [:py:class:`File`]
+    file_list : [:py:class:`bob.db.base.File`]
         A list of File objects to be handled. Also other objects can be
         handled, as long as they are sortable.
 
@@ -342,7 +342,7 @@ class SQLiteBaseDatabase(object):
 class SQLiteDatabase(SQLiteBaseDatabase, FileDatabase):
   """This class can be used for handling SQL **File** based databases.
 
-  It inherits from :py:class:`SQLiteBaseDatabase` and :py:class:`FileDatabase`.
+  It inherits from :py:class:`bob.db.base.SQLiteBaseDatabase` and :py:class:`bob.db.base.FileDatabase`.
 
   """
 
