@@ -3,3 +3,4 @@ py:exc ValueError
 py:exc NotImplementedError
 py:exc IOError
 py.exc urllib2.HTTPError
+py:obj list
