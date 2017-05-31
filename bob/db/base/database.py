@@ -2,6 +2,7 @@
 # vim: set fileencoding=utf-8 :
 
 import os
+import warnings
 
 from . import utils
 
@@ -145,8 +146,9 @@ class Database(FileDatabase):
   :py:class:`bob.db.base.FileDatabase` class if required"""
 
   def __init__(self, original_directory=None, original_extension=None):
-    raise DeprecationWarning("The bob.db.base.Database class is deprecated. "
-                             "Please use bob.db.base.FileDatabase instead.")
+    warnings.warn("The bob.db.base.Database class is deprecated. "
+                  "Please use bob.db.base.FileDatabase instead.",
+                  DeprecationWarning)
     super(Database, self).__init__(original_directory, original_extension)
 
 
