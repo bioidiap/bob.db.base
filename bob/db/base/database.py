@@ -72,7 +72,8 @@ class FileDatabase(object):
     Returns
     -------
     str
-        The original file name for the given :py:class:`bob.db.base.File` object.
+        The original file name for the given :py:class:`bob.db.base.File`
+        object.
 
     Raises
     ------
@@ -142,7 +143,11 @@ class FileDatabase(object):
 class Database(FileDatabase):
   """This class is deprecated. New databases should use the
   :py:class:`bob.db.base.FileDatabase` class if required"""
-  pass
+
+  def __init__(self, original_directory=None, original_extension=None):
+    raise DeprecationWarning("The bob.db.base.Database class is deprecated. "
+                             "Please use bob.db.base.FileDatabase instead.")
+    super(Database, self).__init__(original_directory, original_extension)
 
 
 class SQLiteBaseDatabase(object):
@@ -342,7 +347,8 @@ class SQLiteBaseDatabase(object):
 class SQLiteDatabase(SQLiteBaseDatabase, FileDatabase):
   """This class can be used for handling SQL **File** based databases.
 
-  It inherits from :py:class:`bob.db.base.SQLiteBaseDatabase` and :py:class:`bob.db.base.FileDatabase`.
+  It inherits from :py:class:`bob.db.base.SQLiteBaseDatabase` and
+  :py:class:`bob.db.base.FileDatabase`.
 
   """
 
