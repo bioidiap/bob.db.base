@@ -70,47 +70,64 @@ def upload(arguments):
   assert basedir, "Database and package names do not match. Your declared " \
       "database name should be <name>, if your package is called bob.db.<name>"
 
-  target_file = os.path.join(arguments.destination,
-                             arguments.name + ".tar.bz2")
-
   # check all files exist
   for p in arguments.files:
     if not os.path.exists(p):
       raise IOError("Metadata file `%s' is not available. Did you run "
                     "`create' before attempting to upload?" % (p,))
 
-  # if destination exists, try to erase it before
-  if os.path.exists(target_file):
-    try:
-      os.unlink(target_file)
-    except Exception as e:
-      print("Cannot erase existing file `%s': %s" % (target_file, e))
-
-  # if you get here, all files are there, ready to package
-  print("Compressing metadata files to `%s'" % (target_file,))
-
   # compress
   import tarfile
+  import tempfile
+  import base64
+  import six.moves.urllib
+  import six.moves.http_client
+  import getpass
 
-  f = tarfile.open(target_file, 'w:bz2')
-  for k, p in enumerate(arguments.files):
-    n = os.path.relpath(p, basedir)
-    print("+ [%d/%d] %s" % (k + 1, len(arguments.files), n))
-    f.add(p, n)
-  f.close()
+  parsed_url = six.moves.urllib.parse.urlparse(arguments.destination)
+  target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
 
-  # set permissions for sane Idiap storage
-  import stat
-  perms = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH
-  os.chmod(target_file, perms)
+  # encode user/pass to DAV server before we start
+  password = getpass.getpass(prompt='Password for Bob\'s "uploader": ')
+  password = password.encode('ascii')
+  upass = base64.encodestring(b'uploader:%s' % password).decode('ascii')[:-1]
+  headers = {'Authorization': 'Basic %s' % upass}
+
+  with tempfile.TemporaryFile() as tmpfile:
+
+    # if you get here, all files are there, ready to package
+    print("Compressing metadata files to temporary file...")
+
+    f = tarfile.open(fileobj=tmpfile, mode='w:bz2')
+    for k, p in enumerate(arguments.files):
+      n = os.path.relpath(p, basedir)
+      print("+ [%d/%d] %s" % (k + 1, len(arguments.files), n))
+      f.add(p, n)
+    f.close()
+
+    if parsed_url.scheme == 'https':
+      dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
+    else:
+      dav_server = six.moves.http_client.HTTPConnection(parsed_url.netloc)
+
+    # copy tmpfile to DAV server
+    tmpfile.seek(0)
+    dav_server.request('PUT', target_path, tmpfile, headers=headers)
+    res = dav_server.getresponse()
+    response = res.read()
+    dav_server.close()
+
+    if not (200 <= res.status < 300):
+	    raise IOError(response)
+    else:
+      print("Uploaded %s (status: %d)" % (target_path, res.status))
 
 
 def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
 
   parser = subparsers.add_parser('upload', help=upload.__doc__)
-  parser.add_argument(
-      "--destination", default="/idiap/group/torch5spro/databases/latest")
+  parser.add_argument("--destination", default="https://www.idiap.ch/software/bob/public-upload/databases/latest")
   parser.set_defaults(func=upload)
 
   return parser
