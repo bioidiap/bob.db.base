@@ -127,7 +127,7 @@ def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
 
   parser = subparsers.add_parser('upload', help=upload.__doc__)
-  parser.add_argument("--destination", default="https://www.idiap.ch/software/bob/public-upload/databases/latest")
+  parser.add_argument("--destination", default="http://beatubulatest.lab.idiap.ch/public-upload/databases/latest")
   parser.set_defaults(func=upload)
 
   return parser
