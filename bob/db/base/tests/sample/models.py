@@ -11,7 +11,6 @@ I/O.
 import os
 from bob.db.base import File
 import bob.io.base
-import bob.io.image  # required because our database has images
 
 
 class Sample(File):
@@ -58,6 +57,7 @@ class Sample(File):
   def load(self, directory=None, extension=None):
     '''Default loading routine - see :py:meth:`bob.db.base.File.load`'''
 
+    import bob.io.image
     path = self.make_path(directory, extension)
     return bob.io.base.load(path)
 
