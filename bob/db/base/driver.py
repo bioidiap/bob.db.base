@@ -83,6 +83,7 @@ def upload(arguments):
   import six.moves.urllib
   import six.moves.http_client
   import getpass
+  import shutil
 
   parsed_url = six.moves.urllib.parse.urlparse(arguments.destination)
   target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
@@ -104,6 +105,20 @@ def upload(arguments):
       print("+ [%d/%d] %s" % (k + 1, len(arguments.files), n))
       f.add(p, n)
     f.close()
+    tmpfile.seek(0)
+
+    if parsed_url.scheme in ('', 'file'):
+      if parsed_url.netloc:
+        # relative URL;
+        target_path = parsed_url.netloc + target_path
+      # file location?
+      try:
+        shutil.copyfileobj(tmpfile, open(target_path, 'w'))
+        print("Created %s" % target_path)
+        return
+      except Exception as e:
+        # maybe no file location? try next steps
+        print ("Seems not to be a file location; Exception is as follows: %s" % e)
 
     if parsed_url.scheme == 'https':
       dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
@@ -111,7 +126,6 @@ def upload(arguments):
       dav_server = six.moves.http_client.HTTPConnection(parsed_url.netloc)
 
     # copy tmpfile to DAV server
-    tmpfile.seek(0)
     dav_server.request('PUT', target_path, tmpfile, headers=headers)
     res = dav_server.getresponse()
     response = res.read()
