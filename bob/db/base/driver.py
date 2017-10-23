@@ -140,8 +140,13 @@ def upload(arguments):
 def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
 
+  # default destination for the file to be uploaded is on the local directory
+  curdir = 'file://' + os.path.realpath(os.curdir)
+
   parser = subparsers.add_parser('upload', help=upload.__doc__)
-  parser.add_argument("--destination", default="http://beatubulatest.lab.idiap.ch/public-upload/databases/latest")
+  parser.add_argument("url", default=curdir, nargs='?', help='Pass the URL ' \
+      'for uploading your contribution (if not set, uses default: ' \
+      '\'%(default)s\')')
   parser.set_defaults(func=upload)
 
   return parser
