@@ -118,7 +118,7 @@ def upload(arguments):
         return
       except Exception as e:
         # maybe no file location? try next steps
-        print ("Seems not to be a file location; Exception is as follows: %s" % e)
+        print("Seems not to be a file location; Exception is as follows: %s" % e)
 
     if parsed_url.scheme == 'https':
       dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
