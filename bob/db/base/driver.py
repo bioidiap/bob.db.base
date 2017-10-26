@@ -79,10 +79,8 @@ def upload(arguments):
   # compress
   import tarfile
   import tempfile
-  import base64
   import six.moves.urllib
   import six.moves.http_client
-  import getpass
   import shutil
 
   parsed_url = six.moves.urllib.parse.urlparse(arguments.destination)
@@ -109,19 +107,13 @@ def upload(arguments):
         shutil.copyfileobj(tmpfile, open(target_path, 'w'))
         print("Created %s" % target_path)
         return
-      except Exception as e:
+      except (shutil.Error, IOError) as e:
         # maybe no file location? try next steps
-        print("Seems not to be a file location; Exception is as follows: %s" % e)
+        print("Error: %s" % e)
 
     # print what we are going to do
     target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
-    print("Uploading protocol files to server %s"%target_path)
-
-    # encode user/pass to DAV server before we start
-    password = getpass.getpass(prompt='Password for Bob\'s "uploader": ')
-    password = password.encode('ascii')
-    upass = base64.encodestring(b'uploader:%s' % password).decode('ascii')[:-1]
-    headers = {'Authorization': 'Basic %s' % upass}
+    print("Uploading protocol files to %s" % target_path)
 
     if parsed_url.scheme == 'https':
       dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
