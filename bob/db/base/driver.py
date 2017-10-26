@@ -79,19 +79,11 @@ def upload(arguments):
   # compress
   import tarfile
   import tempfile
-  import base64
   import six.moves.urllib
   import six.moves.http_client
-  import getpass
+  import shutil
 
-  parsed_url = six.moves.urllib.parse.urlparse(arguments.destination)
-  target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
-
-  # encode user/pass to DAV server before we start
-  password = getpass.getpass(prompt='Password for Bob\'s "uploader": ')
-  password = password.encode('ascii')
-  upass = base64.encodestring(b'uploader:%s' % password).decode('ascii')[:-1]
-  headers = {'Authorization': 'Basic %s' % upass}
+  parsed_url = six.moves.urllib.parse.urlparse(arguments.url)
 
   with tempfile.TemporaryFile() as tmpfile:
 
@@ -104,14 +96,38 @@ def upload(arguments):
       print("+ [%d/%d] %s" % (k + 1, len(arguments.files), n))
       f.add(p, n)
     f.close()
+    tmpfile.seek(0)
 
+    # print what we are going to do
+    target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
+    print("Uploading protocol files to %s" % target_path)
+
+    if parsed_url.scheme in ('', 'file'): #local file upload
+      try:
+        shutil.copyfileobj(tmpfile, open(target_path, 'wb'))
+        return
+      except (shutil.Error, IOError) as e:
+        # maybe no file location? try next steps
+        print("Error: %s" % e)
+
+    # if you get to this point, it is because it is a network transfer
     if parsed_url.scheme == 'https':
       dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
     else:
       dav_server = six.moves.http_client.HTTPConnection(parsed_url.netloc)
 
     # copy tmpfile to DAV server
-    tmpfile.seek(0)
+    import base64
+    import getpass
+    from six.moves import input
+    print("Authorization requested by server %s" % parsed_url.netloc)
+    username = input('Username: ')
+    username = username.encode('ascii')
+    password = getpass.getpass(prompt='Password: ')
+    password = password.encode('ascii')
+    upass = base64.encodestring(b'%s:%s' % \
+        (username, password)).decode('ascii')[:-1]
+    headers = {'Authorization': 'Basic %s' % upass}
     dav_server.request('PUT', target_path, tmpfile, headers=headers)
     res = dav_server.getresponse()
     response = res.read()
@@ -126,8 +142,13 @@ def upload(arguments):
 def upload_command(subparsers):
   """Adds a new 'upload' subcommand to your parser"""
 
+  # default destination for the file to be uploaded is on the local directory
+  curdir = 'file://' + os.path.realpath(os.curdir)
+
   parser = subparsers.add_parser('upload', help=upload.__doc__)
-  parser.add_argument("--destination", default="http://beatubulatest.lab.idiap.ch/public-upload/databases/latest")
+  parser.add_argument("url", default=curdir, nargs='?', help='Pass the URL ' \
+      'for uploading your contribution (if not set, uses default: ' \
+      '\'%(default)s\')')
   parser.set_defaults(func=upload)
 
   return parser
