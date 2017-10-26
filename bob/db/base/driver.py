@@ -83,7 +83,7 @@ def upload(arguments):
   import six.moves.http_client
   import shutil
 
-  parsed_url = six.moves.urllib.parse.urlparse(arguments.destination)
+  parsed_url = six.moves.urllib.parse.urlparse(arguments.url)
 
   with tempfile.TemporaryFile() as tmpfile:
 
@@ -98,29 +98,36 @@ def upload(arguments):
     f.close()
     tmpfile.seek(0)
 
-    if parsed_url.scheme in ('', 'file'):
-      if parsed_url.netloc:
-        # relative URL;
-        target_path = parsed_url.netloc + target_path
-      # file location?
+    # print what we are going to do
+    target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
+    print("Uploading protocol files to %s" % target_path)
+
+    if parsed_url.scheme in ('', 'file'): #local file upload
       try:
-        shutil.copyfileobj(tmpfile, open(target_path, 'w'))
-        print("Created %s" % target_path)
+        shutil.copyfileobj(tmpfile, open(target_path, 'wb'))
         return
       except (shutil.Error, IOError) as e:
         # maybe no file location? try next steps
         print("Error: %s" % e)
 
-    # print what we are going to do
-    target_path = '/'.join((parsed_url.path, arguments.name + ".tar.bz2"))
-    print("Uploading protocol files to %s" % target_path)
-
+    # if you get to this point, it is because it is a network transfer
     if parsed_url.scheme == 'https':
       dav_server = six.moves.http_client.HTTPSConnection(parsed_url.netloc)
     else:
       dav_server = six.moves.http_client.HTTPConnection(parsed_url.netloc)
 
     # copy tmpfile to DAV server
+    import base64
+    import getpass
+    from six.moves import input
+    print("Authorization requested by server %s" % parsed_url.netloc)
+    username = input('Username: ')
+    username = username.encode('ascii')
+    password = getpass.getpass(prompt='Password: ')
+    password = password.encode('ascii')
+    upass = base64.encodestring(b'%s:%s' % \
+        (username, password)).decode('ascii')[:-1]
+    headers = {'Authorization': 'Basic %s' % upass}
     dav_server.request('PUT', target_path, tmpfile, headers=headers)
     res = dav_server.getresponse()
     response = res.read()
