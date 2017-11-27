@@ -75,7 +75,7 @@ def test01_annotations():
     # tests the annotation IO functionality provided by this utility class
 
     # check the different annotation types
-    for annotation_type in ('eyecenter', 'named', 'idiap'):
+    for annotation_type in ('eyecenter', 'named', 'idiap', 'json'):
         # get the annotation file name
         annotation_file = bob.io.base.test_utils.datafile(
             "%s.pos" % annotation_type, 'bob.db.base')
@@ -85,8 +85,8 @@ def test01_annotations():
         # check
         assert 'leye' in annotations
         assert 'reye' in annotations
-        assert annotations['leye'] == (20, 40)
-        assert annotations['reye'] == (20, 10)
+        assert tuple(annotations['leye']) == (20, 40), annotations['leye']
+        assert tuple(annotations['reye']) == (20, 10), annotations['reye']
         if annotation_type == 'named':
             assert 'pose' in annotations
             assert annotations['pose'] == 30

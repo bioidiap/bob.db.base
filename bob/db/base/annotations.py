@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
 
-import os
+import json
 import logging
+import os
 logger = logging.getLogger(__name__)
 
 _idiap_annotations = {
@@ -51,6 +52,8 @@ def read_annotation_file(file_name, annotation_type):
         * ``idiap``: The file contains enumerated annotations, one per line,
           e.g.: ``1 key1_x key1_y``, and maybe some additional annotations like
           gender, age, ...
+        * ``json``: The file contains annotations of any format, dumped in a
+          text json file.
 
 
   Returns
@@ -126,6 +129,8 @@ def read_annotation_file(file_name, annotation_type):
         annotations['leye'] = ((annotations['leyeo'][0] + annotations['leyei'][0]) /
                                2., (annotations['leyeo'][1] + annotations['leyei'][1]) / 2.)
 
+    elif str(annotation_type) == 'json':
+      annotations = json.load(f)
     else:
       raise ValueError(
           "The given annotation type '%s' is not known, choose one of ('eyecenter', 'named', 'idiap')" % annotation_type)
