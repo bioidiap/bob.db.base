@@ -29,7 +29,8 @@ class FileDatabase(object):
       The extension of raw data files, e.g. ``.png``.
   """
 
-  def __init__(self, original_directory, original_extension):
+  def __init__(self, original_directory, original_extension, **kwargs):
+    super(FileDatabase, self).__init__(**kwargs)
     self.original_directory = original_directory
     self.original_extension = original_extension
 
@@ -57,7 +58,7 @@ class FileDatabase(object):
     if self.original_extension is None:
       raise ValueError(
           'self.original_extension was not provided (must not be None)!')
-    return self.file_names(
+    return file_names(
         files, self.original_directory, self.original_extension)
 
   def original_file_name(self, file):
@@ -102,42 +103,48 @@ class FileDatabase(object):
   def check_parameters_for_validity(self, parameters, parameter_description,
                                     valid_parameters,
                                     default_parameters=None):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function in bob.db.base.utils")
+    warnings.warn("check_parameters_for_validity is deprecated. Please use "
+                  "the equivalent function in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return check_parameters_for_validity(parameters, parameter_description,
                                          valid_parameters,
                                          default_parameters)
 
   def check_parameter_for_validity(self, parameter, parameter_description,
                                    valid_parameters, default_parameter=None):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function in bob.db.base.utils")
+    warnings.warn("check_parameter_for_validity is deprecated. Please use the "
+                  "equivalent function in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return check_parameter_for_validity(parameter, parameter_description,
                                         valid_parameters,
                                         default_parameter)
 
   def convert_names_to_highlevel(self, names, low_level_names,
                                  high_level_names):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function in bob.db.base.utils")
+    warnings.warn("convert_names_to_highlevel is deprecated. Please use the "
+                  "equivalent function in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return convert_names_to_highlevel(names, low_level_names,
                                       high_level_names)
 
   def convert_names_to_lowlevel(self, names, low_level_names,
                                 high_level_names):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function in bob.db.base.utils")
+    warnings.warn("convert_names_to_lowlevel is deprecated. Please use the "
+                  "equivalent function in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return convert_names_to_lowlevel(names, low_level_names,
                                      high_level_names)
 
   def file_names(self, files, directory, extension):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function in bob.db.base.utils")
+    warnings.warn("file_names is deprecated. Please use the "
+                  "equivalent function in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return file_names(files, directory, extension)
 
   def sort(self, files):
-    DeprecationWarning("This method is deprecated. Please use the "
-                       "equivalent function (sort_files) in bob.db.base.utils")
+    warnings.warn("sort is deprecated. Please use "
+                  "sort_files in bob.db.base.utils",
+                  DeprecationWarning, stacklevel=2)
     return sort_files(files)
 
 
@@ -145,11 +152,13 @@ class Database(FileDatabase):
   """This class is deprecated. New databases should use the
   :py:class:`bob.db.base.FileDatabase` class if required"""
 
-  def __init__(self, original_directory=None, original_extension=None):
+  def __init__(self, original_directory=None, original_extension=None,
+               **kwargs):
     warnings.warn("The bob.db.base.Database class is deprecated. "
                   "Please use bob.db.base.FileDatabase instead.",
-                  DeprecationWarning)
-    super(Database, self).__init__(original_directory, original_extension)
+                  DeprecationWarning, stacklevel=2)
+    super(Database, self).__init__(original_directory, original_extension,
+                                   **kwargs)
 
 
 class SQLiteBaseDatabase(object):
@@ -180,7 +189,8 @@ class SQLiteBaseDatabase(object):
       The `sqlite_file` parameter is kept in this attribute.
   """
 
-  def __init__(self, sqlite_file, file_class):
+  def __init__(self, sqlite_file, file_class, **kwargs):
+    super(SQLiteBaseDatabase, self).__init__(**kwargs)
     self.m_sqlite_file = sqlite_file
     if not os.path.exists(sqlite_file):
       self.m_session = None
@@ -312,11 +322,7 @@ class SQLiteBaseDatabase(object):
     if not preserve_order:
       return file_objects
     else:
-      # path_dict = {f.path : f for f in file_objects}  <<-- works fine
-      # with python 2.7, but not in 2.6
-      path_dict = {}
-      for f in file_objects:
-        path_dict[f.path] = f
+      path_dict = {f.path: f for f in file_objects}
       return [path_dict[path] for path in paths]
 
   def uniquify(self, file_list):
@@ -355,6 +361,9 @@ class SQLiteDatabase(SQLiteBaseDatabase, FileDatabase):
   """
 
   def __init__(self, sqlite_file, file_class,
-               original_directory, original_extension):
-    SQLiteBaseDatabase.__init__(self, sqlite_file, file_class)
-    FileDatabase.__init__(self, original_directory, original_extension)
+               original_directory, original_extension, **kwargs):
+    kwargs['sqlite_file'] = sqlite_file
+    kwargs['file_class'] = file_class
+    kwargs['original_directory'] = original_directory
+    kwargs['original_extension'] = original_extension
+    super(SQLiteDatabase, self).__init__(**kwargs)
