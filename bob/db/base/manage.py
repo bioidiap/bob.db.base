@@ -6,9 +6,11 @@
 """Contains a set of management utilities for a centralized driver script.
 """
 
-import os
-import sys
 import time
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def files_all(args):
   """Executes all the files commands from individual databases"""
@@ -163,14 +165,17 @@ def create_parser(**kwargs):
 
   import pkg_resources
   import argparse
-  import imp
 
   parser = argparse.ArgumentParser(**kwargs)
   subparsers = parser.add_subparsers(title='databases')
 
   # for external entries
   for entrypoint in pkg_resources.iter_entry_points('bob.db'):
-    plugin = entrypoint.load()
+    try:
+      entrypoint.load()
+    except Exception:
+      logger.warning("Failed to load `%s' from installed bob.db entrypoints",
+                     entrypoint.name, exc_info=True)
 
   # at this point we should have loaded all databases
   from .driver import Interface
