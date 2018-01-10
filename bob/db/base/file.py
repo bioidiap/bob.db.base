@@ -13,7 +13,7 @@ class File(object):
   properties.
   """
 
-  def __init__(self, path, file_id=None):
+  def __init__(self, path, file_id=None, **kwargs):
     """**Constructor Documentation**
 
     Initialize the File object with the minimum required data.
@@ -52,6 +52,8 @@ class File(object):
             "Please either specify the file id as parameter, or create an "
             "'id' member variable in the derived class that is automatically "
             "determined (e.g. by SQLite)")
+
+    super(File, self).__init__(**kwargs)
 
   def __lt__(self, other):
     """This function defines the order on the File objects. File objects are
