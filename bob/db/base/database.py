@@ -3,6 +3,7 @@
 
 import os
 import warnings
+import logging
 
 from . import utils
 
@@ -13,6 +14,8 @@ from .utils import check_parameters_for_validity, \
     convert_names_to_lowlevel, \
     file_names, \
     sort_files
+
+logger = logging.getLogger(__name__)
 
 
 class FileDatabase(object):
@@ -46,17 +49,12 @@ class FileDatabase(object):
     -------
     list of :obj:`str`
         The paths extracted for the files, in the same order.
-
-    Raises
-    ------
-    ValueError
-        if original_directory or original_extension is None
     """
     if self.original_directory is None:
-      raise ValueError(
+      logger.warning(
           'self.original_directory was not provided (must not be None)!')
     if self.original_extension is None:
-      raise ValueError(
+      logger.warning(
           'self.original_extension was not provided (must not be None)!')
     return file_names(
         files, self.original_directory, self.original_extension)
@@ -80,11 +78,11 @@ class FileDatabase(object):
     Raises
     ------
     ValueError
-        if original_directory or original_extension is None.
+        if the file is not found.
     """
     # check if directory is set
     if not self.original_directory or not self.original_extension:
-      raise ValueError(
+      logger.warning(
           "The original_directory and/or the original_extension were not"
           " specified in the constructor.")
     # extract file name
