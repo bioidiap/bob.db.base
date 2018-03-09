@@ -135,7 +135,7 @@ def read_annotation_file(file_name, annotation_type):
       raise ValueError(
           "The given annotation type '%s' is not known, choose one of ('eyecenter', 'named', 'idiap')" % annotation_type)
 
-  if 'leye' in annotations and 'reye' in annotations and annotations['leye'][1] < annotations['reye'][1]:
+  if annotations is not None and 'leye' in annotations and 'reye' in annotations and annotations['leye'][1] < annotations['reye'][1]:
     logger.warn(
         "The eye annotations in file '%s' might be exchanged!" % file_name)
 
