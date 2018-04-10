@@ -4,6 +4,7 @@
 import json
 import logging
 import os
+import collections
 logger = logging.getLogger(__name__)
 
 _idiap_annotations = {
@@ -130,7 +131,7 @@ def read_annotation_file(file_name, annotation_type):
                                2., (annotations['leyeo'][1] + annotations['leyei'][1]) / 2.)
 
     elif str(annotation_type) == 'json':
-      annotations = json.load(f)
+      annotations = json.load(f, object_pairs_hook=collections.OrderedDict)
     else:
       raise ValueError(
           "The given annotation type '%s' is not known, choose one of ('eyecenter', 'named', 'idiap')" % annotation_type)
