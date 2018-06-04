@@ -174,16 +174,19 @@ def create_parser(**kwargs):
     try:
       entrypoint.load()
     except Exception:
-      logger.warning("Failed to load `%s' from installed bob.db entrypoints",
+      logger.error("Failed to load `%s' from installed bob.db entrypoints",
                      entrypoint.name, exc_info=True)
 
   # at this point we should have loaded all databases
   from .driver import Interface
   all_modules = []
   for plugin in Interface.__subclasses__():
-    driver = plugin()
-    driver.add_commands(subparsers)
-    all_modules.append(driver)
+    try:
+      driver = plugin()
+      driver.add_commands(subparsers)
+      all_modules.append(driver)
+    except Exception:
+      logger.error('Failed to load db interface %s', plugin, exc_info=1)
 
   add_all_commands(parser, subparsers, all_modules) #inserts the master driver
 
