@@ -199,6 +199,16 @@ class SQLiteBaseDatabase(object):
     assert issubclass(file_class, File)
     self.m_file_class = file_class
 
+  def __getstate__(self):
+    state = self.__dict__.copy()
+    state["m_session"] = None
+    return state
+
+  def __setstate__(self, state):
+    self.__dict__.update(state)
+    if os.path.exists(self.m_sqlite_file):
+      self.m_session = utils.session_try_readonly('sqlite', self.m_sqlite_file)
+
   def __del__(self):
     """Closes the connection to the database."""
 
