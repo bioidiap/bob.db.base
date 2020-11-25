@@ -329,7 +329,7 @@ def check_parameters_for_validity(parameters, parameter_description,
   Returns
   -------
   tuple
-      A list or tuple contatining the valid parameters.
+      A list or tuple containing the valid parameters.
 
   Raises
   ------
@@ -338,8 +338,8 @@ def check_parameters_for_validity(parameters, parameter_description,
 
   """
 
-  if parameters is None:
-      # parameters are not specified, i.e., 'None' or empty lists
+  if not parameters:
+    # parameters are not specified, i.e., 'None' or empty lists
     parameters = default_parameters if default_parameters is not None \
         else valid_parameters
 
