@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import collections
+from bob.extension.download import search_file
 logger = logging.getLogger(__name__)
 
 _idiap_annotations = {
@@ -36,12 +37,12 @@ _idiap_annotations = {
 def read_annotation_file(file_name, annotation_type):
   """This function provides default functionality to read annotation files.
 
-
   Parameters
   ----------
   file_name : str
-      The full path of the annotation file to read
-
+      The full path of the annotation file to read. The path can also be like
+      ``base_path:relative_path`` where the base_path can be both a directory or
+      a tarball. This allows you to read annotations from inside a tarball.
   annotation_type : str
       The type of the annotation file that should be read. The following
       annotation_types are supported:
@@ -56,7 +57,6 @@ def read_annotation_file(file_name, annotation_type):
         * ``json``: The file contains annotations of any format, dumped in a
           text json file.
 
-
   Returns
   -------
   dict
@@ -69,18 +69,21 @@ def read_annotation_file(file_name, annotation_type):
       If the annotation file is not found.
   ValueError
       If the annotation type is not known.
-
   """
-
   if not file_name:
     return None
 
-  if not os.path.exists(file_name):
-    raise IOError("The annotation file '%s' was not found" % file_name)
+  if ":" in file_name:
+    base_path, tail = file_name.split(":", maxsplit=1)
+    f = search_file(base_path, [tail])
+  else:
+    if not os.path.exists(file_name):
+      raise IOError("The annotation file '%s' was not found" % file_name)
+    f = open(file_name)
 
   annotations = {}
 
-  with open(file_name, 'r') as f:
+  try:
 
     if str(annotation_type) == 'eyecenter':
       # only the eye positions are written, all are in the first row
@@ -135,6 +138,8 @@ def read_annotation_file(file_name, annotation_type):
     else:
       raise ValueError(
           "The given annotation type '%s' is not known, choose one of ('eyecenter', 'named', 'idiap')" % annotation_type)
+  finally:
+    f.close()
 
   if annotations is not None and 'leye' in annotations and 'reye' in annotations and annotations['leye'][1] < annotations['reye'][1]:
     logger.warn(
