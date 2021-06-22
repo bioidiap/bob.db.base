@@ -37,6 +37,11 @@ setup(
       'bob.db': [
         'samples = bob.db.base.tests.sample.driver:Interface',
         ],
+
+      # Main entry for bob cli
+      'bob.cli': [
+        'db = bob.db.base.script.db:db',
+      ],
     },
 
     classifiers = [
