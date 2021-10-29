@@ -1,12 +1,12 @@
 .. vim: set fileencoding=utf-8 :
 .. Sat 13 Aug 2016 00:49:28 CEST
 
-.. image:: https://img.shields.io/badge/docs-v3.2.0-orange.svg
-   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.base/v3.2.0/index.html
-.. image:: https://gitlab.idiap.ch/bob/bob.db.base/badges/v3.2.0/pipeline.svg
-   :target: https://gitlab.idiap.ch/bob/bob.db.base/commits/v3.2.0
-.. image:: https://gitlab.idiap.ch/bob/bob.db.base/badges/v3.2.0/coverage.svg
-   :target: https://gitlab.idiap.ch/bob/bob.db.base/commits/v3.2.0
+.. image:: https://img.shields.io/badge/docs-latest-orange.svg
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.base/master/index.html
+.. image:: https://gitlab.idiap.ch/bob/bob.db.base/badges/master/pipeline.svg
+   :target: https://gitlab.idiap.ch/bob/bob.db.base/commits/master
+.. image:: https://gitlab.idiap.ch/bob/bob.db.base/badges/master/coverage.svg
+   :target: https://gitlab.idiap.ch/bob/bob.db.base/commits/master
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.base
 
