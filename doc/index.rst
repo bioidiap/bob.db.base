@@ -7,6 +7,8 @@
  |project| Database
 ====================
 
+This package is deprecated!!! Please use ``bob.pipelines`` for generic database interfaces instead.
+
 A |project| db package (or *database*) contains a set of interfaces (API) to
 programmatically query and access samples and metadata from raw data (usually)
 stored on disk. Because of the growing number of packages of this nature, we

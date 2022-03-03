@@ -36,9 +36,9 @@ which are confusing and difficult to type and remember.
 
 Examples of good, catchy names:
 
-  * ``atnt``: for the AT&T faces database (see ``bob.db.atnt``)
-  * ``iris``: for Fisher's Iris flower dataset (see ``bob.db.iris``)
-  * ``mobio``: for the Mobio biometric database (see ``bob.db.mobio``)
+  * ``atnt``: for the AT&T faces database
+  * ``iris``: for Fisher's Iris flower dataset
+  * ``mobio``: for the Mobio biometric database
 
 Examples of more inappropriate names (avoid these):
 
